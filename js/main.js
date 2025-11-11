@@ -44,7 +44,7 @@ class NEIJobPortal {
         `).join('');
     }
 
-    renderJobItems(jobs, sectionId) {
+   renderJobItems(jobs, sectionId) {
     if (jobs.length === 0) {
         return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No jobs available</p>';
     }
@@ -56,15 +56,9 @@ class NEIJobPortal {
 
         const lastDate = job.lastdate ? `Last Date: <strong style="color:#e74c3c;">${job.lastdate}</strong>` : '<span style="color:#95a5a6;">Date not announced</span>';
 
-        let page = 'job-details.html';
-        if (sectionId.includes('results')) page = 'result-details.html';
-        else if (sectionId.includes('admit-cards')) page = 'admit-card-details.html';
-        else if (sectionId.includes('answer-keys')) page = 'answer-key-details.html';
-        else if (sectionId.includes('central-govt')) page = 'central-govt-details.html';
-        else if (sectionId.includes('private-jobs')) page = 'private-job-details.html';
-
+        // ALL LINKS GO TO detail.html
         return `
-            <a href="pages/${page}?id=${job.id}" class="job-item" data-job-id="${job.id}">
+            <a href="pages/detail.html?id=${job.id}" class="job-item" data-job-id="${job.id}">
                 <div class="job-title">${job.title}</div>
                 <div class="job-meta">
                     <div class="job-lastdate">${lastDate}</div>
