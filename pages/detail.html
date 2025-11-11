@@ -12,7 +12,7 @@
   <style>
     .detail-box { background: white; padding: 2.5rem; border-radius: 20px; box-shadow: var(--box-shadow); max-width: 900px; margin: 2rem auto; }
     .detail-box h1 { color: #667eea; font-size: 2rem; margin-bottom: 1rem; }
-    .detail-row { margin: 1rem 0; font-size: 1.1rem; }
+    .detail-row { margin: 1rem 0; font-size: 1.1rem; line-height: 1.7; }
     .detail-row strong { color: #2c3e50; }
     .last-date { color: #e74c3c; font-weight: bold; font-size: 1.3rem; }
     .btn-group { margin: 2rem 0; display: flex; gap: 1rem; flex-wrap: wrap; }
@@ -21,23 +21,29 @@
     .btn-apply { background: #27ae60; }
     .btn-noti { background: #f39c12; }
     .back-link { color: #667eea; text-decoration: underline; font-weight: bold; }
-    .eligibility-section {
-  background: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 15px;
-  margin: 2rem 0;
-  border-left: 5px solid #667eea;
-}
-
-.eligibility-text {
-  font-size: 1.05rem;
-  line-height: 1.8;
-  color: #2c3e50;
-}
-
-.eligibility-text strong {
-  color: #667eea;
-}
+    
+    .eligibility-box {
+      background: #f0f7ff;
+      padding: 2rem;
+      border-radius: 18px;
+      margin: 2rem 0;
+      border-left: 6px solid #667eea;
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+    }
+    .eligibility-box h3 {
+      color: #667eea;
+      margin-top: 0;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .eligibility-text {
+      font-size: 1.05rem;
+      line-height: 2;
+      color: #2c3e50;
+    }
+    .eligibility-text p {
+      margin: 1rem 0;
+    }
   </style>
 </head>
 <body>
@@ -69,7 +75,21 @@
 
       document.title = `${job.title} - Last Date ${job.lastdate || 'Soon'} | NEI Job Portal`;
 
-      const dates = Array.isArray(job.dates) ? job.dates.join('<br>') : 'Not available';
+      const dates = Array.isArray(job.dates) 
+        ? job.dates.map(d => `• ${d}`).join('<br>') 
+        : 'No dates available';
+
+      // CLEAN ELIGIBILITY — NO <p> GARBAGE
+      const cleanEligibility = job.eligibility 
+        ? job.eligibility
+            .replace(/<p[^>]*>/gi, '<p>')           // Clean <p> tags
+            .replace(/<\/p>/gi, '</p>')             // Clean </p>
+            .replace(/<p>/gi, '')                   // Remove opening <p>
+            .replace(/<\/p>/gi, '<br><br>')         // Replace closing </p> with double break
+            .replace(/\n\s*\n/g, '<br><br>')        // Double newlines = paragraph
+            .replace(/\n/g, '<br>')                 // Single newline = line break
+            .trim()
+        : 'Check official notification';
 
       document.getElementById('job-content').innerHTML = `
         <div class="detail-box">
@@ -83,24 +103,19 @@
           <div class="detail-row"><strong>Age Limit:</strong> ${job.age || 'Check notification'}</div>
           <div class="detail-row"><strong>State:</strong> ${job.state === 'central-govt' ? 'Central Government' : job.state.toUpperCase()}</div>
 
-          <h3 style="margin-top:2rem; color:#667eea;">Eligibility</h3>
-         <div class="eligibility-section">
-              <h3 style="margin-top:2rem; color:#667eea;">Eligibility Criteria</h3>
-              <div class="eligibility-text">
-                ${job.eligibility 
-                  ? job.eligibility
-                      .replace(/<p>/gi, '')           // Remove <p>
-                      .replace(/<\/p>/gi, '<br><br>') // Convert </p> to double line break
-                      .replace(/<br>/gi, '<br>')      // Keep real <br>
-                      .replace(/\n/g, '<br>')         // Convert new lines
-                      .trim()
-                  : 'Check official notification'}
-              </div>
+          <div class="eligibility-box">
+            <h3>Eligibility Criteria</h3>
+            <div class="eligibility-text">
+              ${cleanEligibility}
             </div>
-           <h3 style="margin-top:2rem; color:#667eea;">Important Dates</h3>
-          <p>${dates}</p>
+          </div>
 
-          <h3 style="margin-top:2rem; color:#667eea;">Important Links</h3>
+          <div class="eligibility-box">
+            <h3>Important Dates</h3>
+            <div class="eligibility-text">${dates}</div>
+          </div>
+
+          <h3 style="color:#667eea; margin-top:2rem;">Important Links</h3>
           <div class="btn-group">
             ${job.apply ? `<a href="${job.apply}" target="_blank" class="btn btn-apply">Apply Online</a>` : ''}
             ${job.notification ? `<a href="${job.notification}" target="_blank" class="btn btn-noti">Notification</a>` : ''}
