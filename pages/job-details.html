@@ -34,6 +34,7 @@
           <p><strong>Vacancy:</strong> ${job.vacancy || 'N/A'}</p>
           <p><strong>Post:</strong> ${job.postname || 'Various'}</p>
           <p><strong>Salary:</strong> ${job.salary || 'Check notification'}</p>
+          p><strong>Eligibility:</strong> ${job.eligibility || 'Check notification'}</p>
           <h3>Important Links</h3>
           ${job.apply ? `<a href="${job.apply}" target="_blank" style="background:var(--success); color:white; padding:1rem 2rem; border-radius:10px; text-decoration:none; display:inline-block; margin:0.5rem;">Apply Online</a>` : ''}
           ${job.notification ? `<a href="${job.notification}" target="_blank" style="background:var(--warning); color:white; padding:1rem 2rem; border-radius:10px; text-decoration:none; display:inline-block; margin:0.5rem;">Notification</a>` : ''}
