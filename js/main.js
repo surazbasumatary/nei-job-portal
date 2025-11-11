@@ -34,6 +34,7 @@ function getStatusBadge(status) {
 }
 
 function renderJobCard(job) {
+  // Map category to correct detail page
   const pageMap = {
     latestJobs: 'job-details.html',
     results: 'result-details.html',
@@ -44,44 +45,45 @@ function renderJobCard(job) {
   };
 
   const detailPage = pageMap[job.category] || 'job-details.html';
-  const url = `${detailPage}?id=${job.id}`;
+  const detailUrl = `pages/${detailPage}?id=${job.id}`;
 
-  const specialContent = job.category === 'results' ? `
-    <p><strong>Result:</strong> ${job.resultDesc || 'Check official website'}</p>
-    <a href="${job.resultLink}" target="_blank" class="btn-small">Download Result</a>
-  ` : job.category === 'admitCards' ? `
-    <p><strong>Admit Card:</strong> ${job.admitCardDesc || 'Available now'}</p>
-    <a href="${job.admitCardLink}" target="_blank" class="btn-small">Download Admit Card</a>
-  ` : job.category === 'answerKeys' ? `
-    <p><strong>Answer Key:</strong> ${job.answerKeyDesc || 'Released'}</p>
-    <a href="${job.answerKeyLink}" target="_blank" class="btn-small">Download Answer Key</a>
-  ` : `
-    <a href="${job.apply}" target="_blank" class="btn-apply">Apply Now</a>
-    <a href="${job.notification}" target="_blank" class="btn-noti">Notification PDF</a>
-  `;
+  // Special buttons for Results/Admit/Answer Key
+  let actionButtons = '';
+  if (job.category === 'results' && job.resultLink) {
+    actionButtons = `<a href="${job.resultLink}" target="_blank" class="btn-download">Download Result</a>`;
+  } else if (job.category === 'admitCards' && job.admitCardLink) {
+    actionButtons = `<a href="${job.admitCardLink}" target="_blank" class="btn-download">Download Admit Card</a>`;
+  } else if (job.category === 'answerKeys' && job.answerKeyLink) {
+    actionButtons = `<a href="${job.answerKeyLink}" target="_blank" class="btn-download">Download Answer Key</a>`;
+  } else {
+    actionButtons = `
+      <a href="${job.apply}" target="_blank" class="btn-apply">Apply Now</a>
+      <a href="${job.notification}" target="_blank" class="btn-noti">Notification</a>
+    `;
+  }
 
   return `
-    <a href="${url}" class="job-card-link">
+    <a href="${detailUrl}" class="job-card-link">
       <div class="job-card">
         <div class="job-header">
           <h3>${job.title}</h3>
           ${getStatusBadge(job.status)}
         </div>
-        <div class="job-details">
-          <p><strong>Post:</strong> ${job.postname || 'Various'}</p>
+        <div class="job-info">
+          <p><strong>Last Date:</strong> 
+            <span style="color:#e74c3c; font-weight:bold;">${job.lastdate || 'Soon'}</span>
+          </p>
           <p><strong>Vacancy:</strong> ${job.vacancy || 'See Notification'}</p>
-          <p><strong>Last Date:</strong> <strong style="color:#e74c3c;">${job.lastdate || 'Soon'}</strong></p>
-          ${job.salary ? `<p><strong>Salary:</strong> ${job.salary}</p>` : ''}
+          <p><strong>Post:</strong> ${job.postname || 'Various Posts'}</p>
         </div>
         <div class="job-actions">
-          ${specialContent}
-          <span class="view-more">View Full Details →</span>
+          ${actionButtons}
+          <span class="view-full">View Full Details →</span>
         </div>
       </div>
     </a>
   `;
 }
-
 window.renderJobs = function() {
   const container = document.getElementById('sections-container');
   const activeState = document.querySelector('.navbar a.active')?.getAttribute('data-state') || 'assam';
