@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEI Admin Portal</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/data.js"></script> <!-- Our clean Supabase init -->
-  
+  <script src="js/data.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -16,8 +16,6 @@
       padding: 20px;
       color: #2c3e50;
     }
-
-    /* LOGIN SCREEN */
     #login-screen {
       display: flex;
       align-items: center;
@@ -68,7 +66,6 @@
     }
     .btn:hover { background: #0d6e63; transform: translateY(-3px); }
 
-    /* ADMIN PANEL */
     #admin-panel {
       display: none;
       max-width: 1550px;
@@ -96,10 +93,8 @@
       cursor: pointer;
       font-weight: bold;
     }
-
     .container { padding: 3rem; }
 
-    /* FORM GRID - WIDE & CLEAN */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
@@ -107,7 +102,6 @@
       margin-bottom: 3rem;
     }
     .full-width { grid-column: 1 / -1; }
-
     .form-group label {
       display: block;
       margin-bottom: 0.7rem;
@@ -133,7 +127,6 @@
       outline: none;
     }
     textarea { min-height: 120px; resize: vertical; }
-
     .btn-save {
       background: #667eea;
       color: white;
@@ -147,7 +140,6 @@
     }
     .btn-save:hover { background: #5a6fd8; transform: translateY(-4px); }
 
-    /* JOB LIST */
     .search-bar {
       margin: 2.5rem 0;
       display: flex;
@@ -216,7 +208,6 @@
       color: white;
       border-color: #11998e;
     }
-
     .hidden { display: none !important; }
 
     @media (max-width: 768px) {
@@ -293,17 +284,28 @@
         <div class="form-group"><label>Apply Online</label><input type="url" id="apply" placeholder="https://apsc.nic.in/apply"></div>
         <div class="form-group"><label>Notification PDF</label><input type="url" id="notification" placeholder="https://apsc.nic.in/noti.pdf"></div>
 
+        <!-- RESULT FIELDS -->
         <div class="form-group full-width hidden" id="result-fields">
-          <label>Result Description</label><textarea id="resultDesc"></textarea>
-          <label>Download Result PDF</label><input type="url" id="resultLink">
+          <label>Result Description</label>
+          <textarea id="resultDesc"></textarea>
+          <label>Download Result PDF</label>
+          <input type="url" id="resultLink" placeholder="https://example.com/result.pdf">
         </div>
+
+        <!-- ANSWER KEY FIELDS -->
         <div class="form-group full-width hidden" id="answerkey-fields">
-          <label>Answer Key Description</label><textarea id="answerKeyDesc"></textarea>
-          <label>Download Answer Key PDF</label><input type="url" id="answerKeyLink">
+          <label>Answer Key Description</label>
+          <textarea id="answerKeyDesc"></textarea>
+          <label>Download Answer Key PDF</label>
+          <input type="url" id="answerKeyLink" placeholder="https://example.com/answerkey.pdf">
         </div>
+
+        <!-- ADMIT CARD FIELDS -->
         <div class="form-group full-width hidden" id="admitcard-fields">
-          <label>Admit Card Description</label><textarea id="admitCardDesc"></textarea>
-          <label>Download Admit Card</label><input type="url" id="admitCardLink">
+          <label>Admit Card Description</label>
+          <textarea id="admitCardDesc"></textarea>
+          <label>Download Admit Card</label>
+          <input type="url" id="admitCardLink" placeholder="https://example.com/admit.pdf">
         </div>
 
         <div class="form-group full-width"><label>Status</label>
@@ -363,12 +365,20 @@
       if (session) showPanel(session.user.email);
     });
 
-    document.getElementById('password').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
+    document.getElementById('password').addEventListener('keypress', e => {
+      if (e.key === 'Enter') login();
+    });
 
     async function loadAllJobs() {
       const { data, error } = await window.supabase.from('jobs').select('*').order('id', { ascending: false });
-      if (error) { document.getElementById('all-jobs').innerHTML = `<p style="color:red;">Error: ${error.message}</p>`; return; }
-      allJobs = data.map(job => ({ ...job, state: job.state === 'central-govt' ? 'centralGovtJobs' : job.state }));
+      if (error) {
+        document.getElementById('all-jobs').innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+        return;
+      }
+      allJobs = data.map(job => ({
+        ...job,
+        state: job.state === 'central-govt' ? 'centralGovtJobs' : job.state
+      }));
       displayPage(1);
     }
 
@@ -498,8 +508,9 @@
         ? await window.supabase.from('jobs').update(job).eq('id', editingJob.id)
         : await window.supabase.from('jobs').insert(job);
 
-      if (error) alert("Error: " + error.message);
-      else {
+      if (error) {
+        alert("Error: " + error.message);
+      } else {
         alert(editingJob ? "Job updated successfully!" : "Job added successfully!");
         cancelEdit();
         loadAllJobs();
@@ -514,7 +525,16 @@
       }
     }
 
-    function checkAutofillEligibility() { displayPage(currentPage); }
+    function checkAutofillEligibility() {
+      displayPage(currentPage);
+    }
+
+    // Auto-login if session exists
+    setTimeout(() => {
+      window.supabase.auth.getSession().then(({ data }) => {
+        if (data.session) showPanel(data.session.user.email);
+      });
+    }, 500);
   </script>
 </body>
 </html>
