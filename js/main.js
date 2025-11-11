@@ -54,11 +54,10 @@ class NEIJobPortal {
             start: 'Apply Now', closing: 'Last Few Days', out: 'Out', soon: 'Coming Soon'
         }[job.status] || 'Soon';
 
-        const lastDate = job.lastdate ? `Last Date: <strong style="color:#e74c3c;">${job.lastdate}</strong>` : '<span style="color:#95a5a6;">Date not announced</span>';
+        const lastDate = job.lastdate ? `Last Date: <strong style="color:#e74c3c;">${job.lastdate}</strong>` : '<span style="color:#95a5a6;">Soon</span>';
 
-        // ALL LINKS GO TO detail.html
         return `
-            <a href="pages/detail.html?id=${job.id}" class="job-item" data-job-id="${job.id}">
+            <a href="pages/detail.html?id=${job.id}" class="job-item">
                 <div class="job-title">${job.title}</div>
                 <div class="job-meta">
                     <div class="job-lastdate">${lastDate}</div>
