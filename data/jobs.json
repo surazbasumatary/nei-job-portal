@@ -1,0 +1,28 @@
+{
+  "assam": {
+    "latestJobs": [
+      { "id": 1, "title": "Assam Police SI Recruitment 2025", "status": "start", "statusText": "Apply Now", "link": "#" },
+      { "id": 2, "title": "APSC CCE 2025 (285 Posts)", "status": "start", "statusText": "Start", "link": "#" }
+    ],
+    "results": [
+      { "id": 1, "title": "APSC CCE Prelims Result 2025", "status": "out", "statusText": "Out", "link": "#" }
+    ],
+    "admitCards": [
+      { "id": 1, "title": "Assam TET 2025 Admit Card", "status": "out", "statusText": "Out", "link": "#" }
+    ],
+    "answerKeys": [
+      { "id": 1, "title": "APSC CCE Answer Key 2025", "status": "out", "statusText": "Out", "link": "#" }
+    ],
+    "centralGovtJobs": [
+      { "id": 1, "title": "SSC CGL 2025", "status": "start", "statusText": "Start", "link": "#" }
+    ],
+    "privateJobs": [
+      { "id": 1, "title": "TCS Ninja 2025", "status": "start", "statusText": "Apply Now", "link": "#" }
+    ]
+  },
+  "nagaland": {
+    "latestJobs": [
+      { "id": 1, "title": "NPSC CE 2025", "status": "start", "statusText": "Start", "link": "#" }
+    ]
+  }
+}
