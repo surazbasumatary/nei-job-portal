@@ -1,0 +1,116 @@
+/* Tablet Devices */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .sections-container {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .header .container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .navbar {
+        gap: 1rem;
+    }
+}
+
+/* Mobile Devices */
+@media (max-width: 768px) {
+    .sections-container {
+        grid-template-columns: 1fr;
+    }
+ /* Latest Jobs on TOP for ALL states */
+    [id$="-latest-jobs"] {
+        order: -1 !important;
+    }
+    .logo h1 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+    
+    .logo p {
+        text-align: center;
+    }
+    
+    .navbar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .navbar a {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .job-list {
+        max-height: 400px;
+    }
+    
+    .section-header h2 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 10px;
+    }
+    
+    .main {
+        padding: 1rem 0;
+    }
+    
+    .job-item {
+        padding: 0.8rem;
+    }
+    
+    .job-title {
+        font-size: 0.9rem;
+    }
+    
+    .footer {
+        padding: 1.5rem 0;
+    }
+}
+
+/* Desktop Mode on Mobile */
+@media (min-width: 769px) {
+    .sections-container {
+        grid-template-columns: 1fr 1fr 1fr;
+        min-width: 900px;
+    }
+    
+    .container {
+        min-width: 1000px;
+    }
+}
+/* AdSense Responsive Fixes */
+.adsbygoogle {
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+/* Hide sidebar on mobile */
+@media (max-width: 768px) {
+    #sidebar-ad-desktop {
+        display: none !important;
+    }
+}
+
+/* Show sidebar on desktop */
+@media (min-width: 769px) {
+    #sidebar-ad-desktop {
+        display: block;
+    }
+    
+    .job-detail-card {  /* Adjust content width */
+        margin-right: 320px;  /* Space for sidebar */
+    }
+}
