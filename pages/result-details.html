@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://your-project.supabase.co'
+  const supabaseKey = 'your-anon-key-here'
+  const supabase = Supabase.createClient(supabaseUrl, supabaseKey)
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Details - NEI Job Portal</title>
+    <link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .result-page { padding: 3rem 0; }
+        .result-card { background: white; border-radius: 15px; box-shadow: var(--box-shadow); max-width: 900px; margin: 0 auto; overflow: hidden; }
+        .result-header { background: linear-gradient(135deg, #11998e, #38ef7d); padding: 2.5rem; text-align: center; color: white; }
+        .result-header h1 { font-size: 2rem; margin: 0; }
+        .result-body { padding: 2rem; }
+        .download-btn { background: #11998e; color: white; padding: 1rem 2.5rem; border-radius: 50px; font-weight: bold; text-decoration: none; display: inline-block; margin: 1rem 0; }
+        .download-btn:hover { background: #0e7a6b; }
+        .back-btn { color: var(--text-light); margin: 1.5rem 2rem; display: inline-block; }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7778955138168695"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+<!-- TOP BANNER AD (Above Header) -->
+    <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7778955138168695" data-ad-slot="1445867665" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo"><h1>NEI Job Portal</h1></div>
+            <a href="../index.html" class="back-btn">← Back</a>
+        </div>
+    </header>
+
+    <main class="result-page">
+        <div class="container">
+            <div class="result-card">
+                <div class="result-header">
+                    <h1 id="title">Assam PSC CCE Result 2025</h1>
+                    <p>Declared on <span id="date">05 Nov 2025</span></p>
+                </div>
+                <div class="result-body">
+                    <h2>🎉 Congratulations to all selected candidates!</h2>
+                    <p><strong>Exam:</strong> <span id="exam">Combined Competitive (Prelims)</span></p>
+                    <p><strong>Post:</strong> <span id="post">APS, ACS, Inspector, etc.</span></p>
+                    <p><strong>Total Selected:</strong> <span id="selected">1,248</span></p>
+                    <p><strong>Cut-off (General):</strong> <span id="cutoff">112.5</span></p>
+
+                    <hr style="margin:2rem 0">
+
+                    <h3>Next Steps</h3>
+                    <ul>
+                        <li>Mains Exam: 18-20 Dec 2025</li>
+                        <li>Admit Card: 10 Dec 2025</li>
+                        <li>Interview: Feb 2026</li>
+                    </ul>
+
+                    <a href="#" id="pdf-link" class="download-btn" target="_blank">
+                        📥 Download Result PDF
+                    </a>
+                    <a href="#" id="merit-link" class="download-btn" target="_blank" style="background:#e67e22; margin-left:1rem;">
+                        🏆 View Merit List
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <div style="text-align:center; margin:2rem 0; padding:1rem; background:var(--bg-light);">
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-7778955138168695" data-ad-slot="1445867665" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 NEI Job Portal</p>
+        </div>
+    </footer>
+
+    <script>
+        const params = new URLSearchParams(location.search);
+        const state = params.get('state');
+        const id = params.get('id') || 1;
+
+        const results = {
+            assam: {
+                1: { title: "Assam PSC CCE Prelims Result 2025", date: "05 Nov 2025", exam: "CCE Prelims", post: "APS, ACS, Inspector", selected: "1,248", cutoff: "112.5", pdf: "https://apsc.nic.in/results/cce2025.pdf", merit: "https://apsc.nic.in/merit/cce2025.pdf" }
+            },
+            nagaland: {
+                1: { title: "NPSC CE Result 2025", date: "04 Nov 2025", exam: "Common Exam", post: "LDA, UDA", selected: "892", cutoff: "98.0", pdf: "#", merit: "#" }
+            }
+            // Add more...
+        };
+
+        const data = (results[state] || {})[id] || {
+            title: "Result Declared", date: "Today", exam: "Various", post: "Multiple", selected: "Check PDF", cutoff: "N/A", pdf: "#", merit: "#"
+        };
+
+        document.getElementById('title').textContent = data.title;
+        document.getElementById('date').textContent = data.date;
+        document.getElementById('exam').textContent = data.exam;
+        document.getElementById('post').textContent = data.post;
+        document.getElementById('selected').textContent = data.selected;
+        document.getElementById('cutoff').textContent = data.cutoff;
+        document.getElementById('pdf-link').href = data.pdf;
+        document.getElementById('merit-link').href = data.merit;
+    </script>
+</body>
+</html>
