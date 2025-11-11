@@ -1,43 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  const supabaseUrl = 'https://your-project.supabase.co'
-  const supabaseKey = 'your-anon-key-here'
-  const supabase = Supabase.createClient(supabaseUrl, supabaseKey)
-</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEI Admin Panel</title>
+  <title>NEI Admin Login</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = 'https://enfzymosvlrmfluwidbj.supabase.co'  // CHANGE THIS
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuZnp5bW9zdmxybWZsdXdpZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTU1ODYsImV4cCI6MjA3NzkzMTU4Nn0._Mf8tyGBmcVgYPDTinF-UVD-HJD3-9OB90IAPJ5Dyx4'                // CHANGE THIS
+    const supabase = Supabase.createClient(supabaseUrl, supabaseKey)
+  </script>
   <style>
-    .admin { max-width: 1000px; margin: 3rem auto; padding: 2rem; background: white; border-radius: 15px; box-shadow: var(--box-shadow); }
+    body { 
+      background: linear-gradient(135deg, #11998e, #38ef7d); 
+      height: 100vh; margin: 0; display: flex; align-items: center; justify-content: center; 
+      font-family: 'Segoe UI', sans-serif; 
+    }
+    .login-box { 
+      background: white; padding: 3rem; border-radius: 20px; 
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2); text-align: center; 
+      max-width: 400px; width: 90%; 
+    }
+    .logo { font-size: 3.5rem; margin-bottom: 0.5rem; color: #11998e; }
+    input { 
+      width: 100%; padding: 1rem; margin: 1rem 0; border: 2px solid #ddd; 
+      border-radius: 50px; font-size: 1.1rem; text-align: center; 
+    }
+    .btn { 
+      background: #11998e; color: white; padding: 1rem 2rem; border: none; 
+      border-radius: 50px; cursor: pointer; font-weight: bold; width: 100%; 
+      font-size: 1.2rem; 
+    }
+    .btn:hover { background: #0e7a6b; }
+    .hidden { display: none; }
+    .logout { float: right; background: #e74c3c; padding: 0.5rem 1rem; font-size: 0.9rem; border-radius: 50px; color: white; }
+
+    /* Admin Panel Styles */
+    .admin { max-width: 1000px; margin: 2rem auto; padding: 2rem; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .form-group { margin-bottom: 1rem; }
     label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
     input, select, textarea { width: 100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
     textarea { min-height: 100px; resize: vertical; }
-    .btn { background: #667eea; color: white; padding: 0.8rem 2rem; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; margin-top: 1rem; }
-    .btn:hover { background: #5a67d8; }
+    .btn-save { background: #667eea; color: white; padding: 0.8rem 2rem; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; margin-top: 1rem; }
     .btn-edit { background: #f39c12; font-size: 0.8rem; padding: 0.4rem 0.8rem; margin-left: 0.5rem; }
     .btn-delete { background: #e74c3c; }
     .btn-autofill { background: #27ae60; font-size: 0.8rem; padding: 0.4rem 0.8rem; margin-left: 0.5rem; }
-    .btn-autofill:hover { background: #219653; }
     .full-width { grid-column: span 2; }
-    .hidden { display: none; }
-
     .search-bar { margin: 1.5rem 0; display: flex; gap: 1rem; align-items: center; }
     .search-bar input { flex: 1; padding: 0.8rem; font-size: 1rem; }
     .pagination { display: flex; justify-content: center; gap: 0.5rem; margin: 1rem 0; }
     .page-btn { padding: 0.5rem 1rem; background: #f0f0f0; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; }
     .page-btn.active { background: #667eea; color: white; }
-    .page-btn:hover { background: #ddd; }
-
-    .job-entry {
-      background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 0.5rem 0;
-      position: relative; font-size: 0.9rem; border-left: 4px solid #667eea;
-    }
+    .job-entry { background: #f8f9fa; padding: 1rem; border-radius: 8px; margin: 0.5rem 0; position: relative; font-size: 0.9rem; border-left: 4px solid #667eea; }
     .job-status { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
     .status-start { background: #d4edda; color: #155724; }
     .status-closing { background: #f8d7da; color: #721c24; }
@@ -47,21 +63,36 @@
 </head>
 <body>
 
-  <div class="container">
-    <div class="admin">
-      <h1>NEI Job Portal - Admin Panel</h1>
+  <!-- LOGIN SCREEN -->
+  <div class="login-box" id="login-screen">
+    <div class="logo">NEI</div>
+    <h2>Admin Portal</h2>
+    <p>Secure Login</p>
+    
+    <input type="text" id="username" placeholder="Username" autocomplete="off">
+    <input type="password" id="password" placeholder="Password" autocomplete="off">
+    
+    <button class="btn" onclick="login()">LOGIN</button>
+    
+    <p style="margin-top:1.5rem; color:#888; font-size:0.9rem;">
+      Default: <strong>admin</strong> / <strong>nei2025ultra</strong>
+    </p>
+  </div>
 
-      <!-- SECRET URL CHECK -->
-      <div id="access-denied" class="hidden">
-        <h2 style="color:#e74c3c; text-align:center;">Access Denied</h2>
-      </div>
+  <!-- ADMIN PANEL -->
+  <div id="admin-panel" class="hidden">
+    <div class="container">
+      <div class="admin">
+        <h1>NEI Job Portal - Admin Panel 
+          <button class="logout" onclick="logout()">Logout</button>
+        </h1>
+        <p><strong>Logged in as:</strong> <span id="logged-user"></span></p>
 
-      <div id="admin-form">
         <!-- FORM -->
         <div class="form-grid" id="job-form">
           <div class="form-group">
             <label>State</label>
-            <select id="state" onchange="checkAutofillEligibility()">
+            <select id="state" onchange="checkAutofillEligibility(); showCategoryFields();">
               <option value="">-- Select State --</option>
               <option value="assam">Assam</option>
               <option value="arunachal-pradesh">Arunachal Pradesh</option>
@@ -77,7 +108,7 @@
 
           <div class="form-group">
             <label>Category</label>
-            <select id="category" onchange="checkAutofillEligibility()">
+            <select id="category" onchange="checkAutofillEligibility(); showCategoryFields();">
               <option value="">-- Select Category --</option>
               <option value="latestJobs">Latest Jobs</option>
               <option value="results">Results</option>
@@ -87,8 +118,6 @@
               <option value="privateJobs">Private Jobs</option>
             </select>
           </div>
-
-          <!-- REMOVED AUTO-SELECT SECTION -->
 
           <div class="form-group full-width">
             <label>Job Title</label>
@@ -145,7 +174,6 @@
             <input type="url" id="notification" placeholder="https://apsc.nic.in/noti.pdf">
           </div>
 
-          <!-- RESULT FIELDS -->
           <div class="form-group full-width hidden" id="result-fields">
             <label>Result Description</label>
             <textarea id="resultDesc" placeholder="Result declared for Prelims..."></textarea>
@@ -153,7 +181,6 @@
             <input type="url" id="resultLink" placeholder="https://apsc.nic.in/result.pdf">
           </div>
 
-          <!-- ANSWER KEY FIELDS -->
           <div class="form-group full-width hidden" id="answerkey-fields">
             <label>Answer Key Description</label>
             <textarea id="answerKeyDesc" placeholder="Final answer key released..."></textarea>
@@ -161,7 +188,6 @@
             <input type="url" id="answerKeyLink" placeholder="https://apsc.nic.in/answerkey.pdf">
           </div>
 
-          <!-- ADMIT CARD FIELDS -->
           <div class="form-group full-width hidden" id="admitcard-fields">
             <label>Admit Card Description</label>
             <textarea id="admitCardDesc" placeholder="Download admit card from 10 Dec..."></textarea>
@@ -179,15 +205,14 @@
             </select>
           </div>
 
-          <button class="btn" id="save-btn" onclick="saveJob()">SAVE JOB</button>
-          <button class="btn btn-delete hidden" id="cancel-btn" onclick="cancelEdit()" style="margin-left:1rem;">CANCEL</button>
+          <button class="btn-save" id="save-btn" onclick="saveJob()">SAVE JOB</button>
+          <button class="btn-delete hidden" id="cancel-btn" onclick="cancelEdit()" style="margin-left:1rem;">CANCEL</button>
         </div>
 
-        <!-- SEARCH + ALL JOBS -->
         <h3 style="margin-top:2rem;">All Jobs</h3>
         <div class="search-bar">
           <input type="text" id="search-input" placeholder="Search by title, post, vacancy..." onkeyup="filterJobs()">
-          <button class="btn" onclick="filterJobs()">Search</button>
+          <button class="btn-save" onclick="filterJobs()">Search</button>
         </div>
 
         <div id="all-jobs"></div>
@@ -197,58 +222,67 @@
   </div>
 
   <script>
-    const ADMIN_KEY = "neiadmin2025";
     const JOBS_PER_PAGE = 10;
     let allJobs = [];
     let currentPage = 1;
     let editingJob = null;
 
-    // SECRET URL CHECK
-    const params = new URLSearchParams(location.search);
-    if (params.get('key') !== ADMIN_KEY) {
-      document.getElementById('admin-form').classList.add('hidden');
-      document.getElementById('access-denied').classList.remove('hidden');
-      throw new Error("Access denied");
-    }
+    // LOGIN FROM SUPABASE admins TABLE
+    async function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
 
-    // Load all jobs
-    async function loadAllJobs() {
-      try {
-        const res = await fetch('data/jobs.json');
-        const data = await res.json();
-        allJobs = [];
+      if (!username || !password) return alert("Enter username & password!");
 
-        Object.keys(data).forEach(state => {
-          Object.keys(data[state]).forEach(cat => {
-            data[state][cat].forEach(job => {
-              allJobs.push({ ...job, state, category: cat });
-            });
-          });
-        });
+      const { data, error } = await supabase
+        .from('admins')
+        .select('*')
+        .eq('username', username)
+        .single();
 
-        allJobs.sort((a, b) => b.id - a.id);
-        displayPage(1);
-      } catch (err) {
-        document.getElementById('all-jobs').innerHTML = "<p>Failed to load jobs.</p>";
+      if (error || !data) {
+        alert("Wrong username!");
+        return;
+      }
+
+      if (data.password === password) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('admin-panel').classList.remove('hidden');
+        document.getElementById('logged-user').textContent = username;
+        loadAllJobs();
+        alert("Welcome, " + username + "!");
+      } else {
+        alert("Wrong password!");
       }
     }
 
-    // Check if autofill is eligible and highlight matching jobs
-    function checkAutofillEligibility() {
-      const state = document.getElementById('state').value;
-      const category = document.getElementById('category').value;
+    function logout() {
+      document.getElementById('admin-panel').classList.add('hidden');
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+    }
 
-      // Re-display all jobs with autofill buttons only for matching ones
-      displayPage(currentPage);
+    document.getElementById('password').addEventListener('keypress', e => {
+      if (e.key === 'Enter') login();
+    });
+
+    // LOAD JOBS FROM SUPABASE
+    async function loadAllJobs() {
+      const { data, error } = await supabase.from('jobs').select('*').order('id', { ascending: false });
+      if (error) {
+        document.getElementById('all-jobs').innerHTML = "<p>Failed to load jobs.</p>";
+        return;
+      }
+      allJobs = data.map(job => ({ ...job, state: job.state === 'central-govt' ? 'centralGovtJobs' : job.state }));
+      displayPage(1);
     }
 
     function isJobAutofillEligible(job, selectedState, selectedCategory) {
       const isCentral = selectedState === 'central-govt';
       const isCentralJob = job.state === 'centralGovtJobs';
-
-      if (isCentral && isCentralJob && job.category === selectedCategory) return true;
-      if (!isCentral && job.state === selectedState && job.category === selectedCategory) return true;
-      return false;
+      return (isCentral && isCentralJob && job.category === selectedCategory) ||
+             (!isCentral && job.state === selectedState && job.category === selectedCategory);
     }
 
     function displayPage(page) {
@@ -261,18 +295,16 @@
 
       const html = pageJobs.map(job => {
         const eligible = selectedState && selectedCategory && isJobAutofillEligible(job, selectedState, selectedCategory);
-        const autofillBtn = eligible
-          ? `<button class="btn btn-autofill" onclick='autofillForm(${JSON.stringify(job).replace(/'/g, "\\'")})'>Autofill</button>`
-          : '';
+        const autofillBtn = eligible ? `<button class="btn-autofill" onclick='autofillForm(${JSON.stringify(job)})'>Autofill</button>` : '';
 
         return `
           <div class="job-entry">
             <strong>${job.state === 'centralGovtJobs' ? 'CENTRAL' : job.state.toUpperCase()} → ${job.category}</strong><br>
             <strong>${job.title}</strong><br>
             Post: ${job.postName} | Vacancy: ${job.vacancy} | Last Date: ${job.lastDate}<br>
-            <span class="job-status status-${job.status}">${getStatusText(job.status)}</span>
-            <button class="btn btn-edit" onclick='editJob("${job.state}", "${job.category}", ${JSON.stringify(job).replace(/"/g, '&quot;')})'>EDIT</button>
-            <button class="btn btn-delete" onclick='deleteJob("${job.state}", "${job.category}", ${job.id})'>DELETE</button>
+            <span class="job-status status-${job.status}">${job.statusText || getStatusText(job.status)}</span>
+            <button class="btn-edit" onclick='editJob(${JSON.stringify(job)})'>EDIT</button>
+            <button class="btn-delete" onclick='deleteJob(${job.id})'>DELETE</button>
             ${autofillBtn}
           </div>
         `;
@@ -295,7 +327,7 @@
       const query = document.getElementById('search-input').value.toLowerCase();
       const filtered = allJobs.filter(job =>
         job.title.toLowerCase().includes(query) ||
-        job.postName.toLowerCase().includes(query) ||
+        (job.postName && job.postName.toLowerCase().includes(query)) ||
         job.vacancy.includes(query) ||
         job.lastDate.toLowerCase().includes(query)
       );
@@ -303,25 +335,23 @@
       displayPage(1);
     }
 
-    // AUTOFILL FUNCTION (fills form without entering edit mode)
     window.autofillForm = function(job) {
       document.getElementById('state').value = job.state === 'centralGovtJobs' ? 'central-govt' : job.state;
       document.getElementById('category').value = job.category;
-      document.getElementById('title').value = job.title;
-      document.getElementById('postName').value = job.postName;
-      document.getElementById('vacancy').value = job.vacancy;
-      document.getElementById('lastDate').value = job.lastDate;
-      document.getElementById('fee').value = job.fee;
-      document.getElementById('age').value = job.age;
-      document.getElementById('salary').value = job.salary;
-      document.getElementById('eligibility').value = job.eligibility;
+      document.getElementById('title').value = job.title || '';
+      document.getElementById('postName').value = job.postName || '';
+      document.getElementById('vacancy').value = job.vacancy || '';
+      document.getElementById('lastDate').value = job.lastDate || '';
+      document.getElementById('fee').value = job.fee || '';
+      document.getElementById('age').value = job.age || '';
+      document.getElementById('salary').value = job.salary || '';
+      document.getElementById('eligibility').value = job.eligibility || '';
       document.getElementById('dates').value = Array.isArray(job.dates) ? job.dates.join('\n') : '';
-      document.getElementById('official').value = job.official;
-      document.getElementById('apply').value = job.apply;
-      document.getElementById('notification').value = job.notification;
-      document.getElementById('status').value = job.status;
+      document.getElementById('official').value = job.official || '';
+      document.getElementById('apply').value = job.apply || '';
+      document.getElementById('notification').value = job.notification || '';
+      document.getElementById('status').value = job.status || 'soon';
 
-      // Special fields
       document.getElementById('resultDesc').value = job.resultDesc || '';
       document.getElementById('resultLink').value = job.resultLink || '';
       document.getElementById('answerKeyDesc').value = job.answerKeyDesc || '';
@@ -333,17 +363,16 @@
       document.getElementById('save-btn').textContent = "SAVE JOB";
       document.getElementById('cancel-btn').classList.add('hidden');
       editingJob = null;
-
       alert(`Autofilled: ${job.title}`);
-      document.getElementById('job-form').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('job-form').scrollIntoView();
     };
 
-    function editJob(state, category, job) {
+    window.editJob = function(job) {
       editingJob = job;
-      autofillForm(job); // Reuse autofill logic
+      autofillForm(job);
       document.getElementById('save-btn').textContent = "UPDATE JOB";
       document.getElementById('cancel-btn').classList.remove('hidden');
-    }
+    };
 
     function cancelEdit() {
       editingJob = null;
@@ -356,7 +385,7 @@
       document.getElementById('category').value = '';
       document.getElementById('save-btn').textContent = "SAVE JOB";
       document.getElementById('cancel-btn').classList.add('hidden');
-      document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('#result-fields, #answerkey-fields, #admitcard-fields').forEach(el => el.classList.add('hidden'));
     }
 
     function showCategoryFields() {
@@ -366,87 +395,81 @@
       document.getElementById('admitcard-fields').classList.toggle('hidden', cat !== 'admitCards');
     }
 
-   async function saveJob() {
-  const state = document.getElementById('state').value
-  const category = document.getElementById('category').value
-  if (!state || !category) return alert("Select State and Category!")
-
-  const job = {
-    state: state === 'central-govt' ? 'central-govt' : state,
-    category,
-    title: document.getElementById('title').value.trim(),
-    postName: document.getElementById('postName').value || "Various Posts",
-    vacancy: document.getElementById('vacancy').value || "Multiple",
-    lastDate: document.getElementById('lastDate').value || "Coming Soon",
-    fee: document.getElementById('fee').value || "Check Notification",
-    age: document.getElementById('age').value || "18-35 Years",
-    salary: document.getElementById('salary').value || "As per rules",
-    eligibility: document.getElementById('eligibility').value || "Check notification.",
-    dates: document.getElementById('dates').value.split('\n').filter(d => d.trim()),
-    official: document.getElementById('official').value || "#",
-    apply: document.getElementById('apply').value || "#",
-    notification: document.getElementById('notification').value || "#",
-    status: document.getElementById('status').value,
-    statusText: getStatusText(document.getElementById('status').value)
-  }
-
-  // Add special fields
-  if (category === 'results') {
-    job.resultDesc = document.getElementById('resultDesc').value
-    job.resultLink = document.getElementById('resultLink').value
-  }
-  if (category === 'answerKeys') {
-    job.answerKeyDesc = document.getElementById('answerKeyDesc').value
-    job.answerKeyLink = document.getElementById('answerKeyLink').value
-  }
-  if (category === 'admitCards') {
-    job.admitCardDesc = document.getElementById('admitCardDesc').value
-    job.admitCardLink = document.getElementById('admitCardLink').value
-  }
-
-  let response
-  if (editingJob) {
-    response = await supabase.from('jobs').update(job).eq('id', editingJob.id)
-  } else {
-    response = await supabase.from('jobs').insert(job)
-  }
-
-  if (response.error) {
-    alert("Error: " + response.error.message)
-  } else {
-    alert(editingJob ? "Updated!" : "Added!")
-    resetForm()
-    loadAllJobs()
-  }
-}
-
-    async function deleteJob(state, category, id) {
-      if (!confirm("Delete this job permanently?")) return;
-      const actualState = state === 'centralGovtJobs' ? 'centralGovtJobs' : state;
-      const res = await fetch('data/jobs.json');
-      const data = await res.json();
-      if (data[actualState]?.[category]) {
-        data[actualState][category] = data[actualState][category].filter(j => j.id !== id);
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'jobs-updated.json';
-        a.click();
-        loadAllJobs();
-      }
-    }
-
     function getStatusText(status) {
       const map = { start: 'Apply Now', closing: 'Last Date', out: 'Out', soon: 'Soon' };
       return map[status] || status;
     }
 
-    // Init
-    loadAllJobs();
-    document.getElementById('state').addEventListener('change', checkAutofillEligibility);
-    document.getElementById('category').addEventListener('change', checkAutofillEligibility);
-    document.getElementById('category').addEventListener('change', showCategoryFields);
+    async function saveJob() {
+      const state = document.getElementById('state').value;
+      const category = document.getElementById('category').value;
+      if (!state || !category) return alert("Select State and Category!");
+
+      const job = {
+        state: state === 'central-govt' ? 'central-govt' : state,
+        category,
+        title: document.getElementById('title').value.trim(),
+        postName: document.getElementById('postName').value || "Various Posts",
+        vacancy: document.getElementById('vacancy').value || "Multiple",
+        lastDate: document.getElementById('lastDate').value || "Coming Soon",
+        fee: document.getElementById('fee').value || "Check Notification",
+        age: document.getElementById('age').value || "18-35 Years",
+        salary: document.getElementById('salary').value || "As per rules",
+        eligibility: document.getElementById('eligibility').value || "Check official notification.",
+        dates: document.getElementById('dates').value.split('\n').filter(d => d.trim()),
+        official: document.getElementById('official').value || "#",
+        apply: document.getElementById('apply').value || "#",
+        notification: document.getElementById('notification').value || "#",
+        status: document.getElementById('status').value,
+        statusText: getStatusText(document.getElementById('status').value)
+      };
+
+      if (category === 'results') {
+        job.resultDesc = document.getElementById('resultDesc').value;
+        job.resultLink = document.getElementById('resultLink').value;
+      }
+      if (category === 'answerKeys') {
+        job.answerKeyDesc = document.getElementById('answerKeyDesc').value;
+        job.answerKeyLink = document.getElementById('answerKeyLink').value;
+      }
+      if (category === 'admitCards') {
+        job.admitCardDesc = document.getElementById('admitCardDesc').value;
+        job.admitCardLink = document.getElementById('admitCardLink').value;
+      }
+
+      if (!job.title) return alert("Title is required!");
+
+      let response;
+      if (editingJob) {
+        response = await supabase.from('jobs').update(job).eq('id', editingJob.id);
+      } else {
+        response = await supabase.from('jobs').insert(job);
+      }
+
+      if (response.error) {
+        alert("Error: " + response.error.message);
+      } else {
+        alert(editingJob ? "Job updated!" : "Job added!");
+        resetForm();
+        loadAllJobs();
+      }
+    }
+
+    async function deleteJob(id) {
+      if (!confirm("Delete this job permanently?")) return;
+      const { error } = await supabase.from('jobs').delete().eq('id', id);
+      if (error) alert("Delete failed: " + error.message);
+      else loadAllJobs();
+    }
+
+    function checkAutofillEligibility() {
+      displayPage(currentPage);
+    }
+
+    // Auto-check on load
+    window.onload = () => {
+      // Try to auto-login if already logged in (future)
+    };
   </script>
 </body>
 </html>
