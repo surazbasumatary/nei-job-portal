@@ -9,7 +9,8 @@
   <script>
     const supabaseUrl = 'https://enfzymosvlrmfluwidbj.supabase.co'  // CHANGE THIS IF NEEDED
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuZnp5bW9zdmxybWZsdXdpZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTU1ODYsImV4cCI6MjA3NzkzMTU4Nn0._Mf8tyGBmcVgYPDTinF-UVD-HJD3-9OB90IAPJ5Dyx4'  // CHANGE THIS IF NEEDED
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey)
+    const { createClient } = supabase;
+  window.supabase = createClient(supabaseUrl, supabaseKey);
   </script>
   <style>
     body { 
