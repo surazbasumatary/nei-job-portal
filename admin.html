@@ -5,15 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NEI Admin - Secure Login</title>
   <link rel="stylesheet" href="css/style.css">
- <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/module/index.js'
-  
-  const supabaseUrl = 'https://enfzymosvlrmfluwidbj.supabase.co'
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuZnp5bW9zdmxybWZsdXdpZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTU1ODYsImV4cCI6MjA3NzkzMTU4Nn0._Mf8tyGBmcVgYPDTinF-UVD-HJD3-9OB90IAPJ5Dyx4'
-  
-  const supabase = createClient(supabaseUrl, supabaseKey)
-  window.supabase = supabase
-</script>
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
+
+    const supabaseUrl = 'https://enfzymosvlrmfluwidbj.supabase.co'
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuZnp5bW9zdmxybWZsdXdpZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTU1ODYsImV4cCI6MjA3NzkzMTU4Nn0._Mf8tyGBmcVgYPDTinF-UVD-HJD3-9OB90IAPJ5Dyx4'
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // Make it global
+    window.supabase = supabase
+
+    console.log("Supabase loaded using official method!")
+  </script>
   <style>
     body { 
       background: linear-gradient(135deg, #667eea, #764ba2); 
