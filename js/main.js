@@ -34,6 +34,18 @@ function getStatusBadge(status) {
 }
 
 function renderJobCard(job) {
+  const pageMap = {
+    latestJobs: 'job-details.html',
+    results: 'result-details.html',
+    admitCards: 'admit-card-details.html',
+    answerKeys: 'answer-key-details.html',
+    centralGovtJobs: 'central-govt-details.html',
+    privateJobs: 'private-job-details.html'
+  };
+
+  const detailPage = pageMap[job.category] || 'job-details.html';
+  const url = `${detailPage}?id=${job.id}`;
+
   const specialContent = job.category === 'results' ? `
     <p><strong>Result:</strong> ${job.resultDesc || 'Check official website'}</p>
     <a href="${job.resultLink}" target="_blank" class="btn-small">Download Result</a>
@@ -44,27 +56,29 @@ function renderJobCard(job) {
     <p><strong>Answer Key:</strong> ${job.answerKeyDesc || 'Released'}</p>
     <a href="${job.answerKeyLink}" target="_blank" class="btn-small">Download Answer Key</a>
   ` : `
-    <a href="${job.apply}" target="_blank" class="btn-apply">Apply Online</a>
-    <a href="${job.notification}" target="_blank" class="btn-noti">Notification</a>
+    <a href="${job.apply}" target="_blank" class="btn-apply">Apply Now</a>
+    <a href="${job.notification}" target="_blank" class="btn-noti">Notification PDF</a>
   `;
 
   return `
-    <div class="job-card">
-      <div class="job-header">
-        <h3>${job.title}</h3>
-        ${getStatusBadge(job.status)}
+    <a href="${url}" class="job-card-link">
+      <div class="job-card">
+        <div class="job-header">
+          <h3>${job.title}</h3>
+          ${getStatusBadge(job.status)}
+        </div>
+        <div class="job-details">
+          <p><strong>Post:</strong> ${job.postname || 'Various'}</p>
+          <p><strong>Vacancy:</strong> ${job.vacancy || 'See Notification'}</p>
+          <p><strong>Last Date:</strong> <strong style="color:#e74c3c;">${job.lastdate || 'Soon'}</strong></p>
+          ${job.salary ? `<p><strong>Salary:</strong> ${job.salary}</p>` : ''}
+        </div>
+        <div class="job-actions">
+          ${specialContent}
+          <span class="view-more">View Full Details →</span>
+        </div>
       </div>
-      <div class="job-details">
-        <p><strong>Post:</strong> ${job.postname || 'Various Posts'}</p>
-        <p><strong>Vacancy:</strong> ${job.vacancy || 'Check Notification'}</p>
-        <p><strong>Last Date:</strong> ${job.lastdate || 'Soon'}</p>
-        ${job.salary ? `<p><strong>Salary:</strong> ${job.salary}</p>` : ''}
-      </div>
-      <div class="job-actions">
-        ${specialContent}
-        <a href="${job.official}" target="_blank" class="btn-official">Official Website</a>
-      </div>
-    </div>
+    </a>
   `;
 }
 
