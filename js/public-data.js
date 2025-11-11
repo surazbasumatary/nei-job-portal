@@ -1,5 +1,5 @@
 // js/public-data.js
-// LIVE DATA LOADER WITH REAL-TIME UPDATES
+// LOADS DATA FROM SUPABASE + REAL-TIME
 
 const supabaseUrl = 'https://enfzymosvlrmfluwidbj.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuZnp5bW9zdmxybWZsdXdpZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTU1ODYsImV4cCI6MjA3NzkzMTU4Nn0._Mf8tyGBmcVgYPDTinF-UVD-HJD3-9OB90IAPJ5Dyx4';
@@ -9,7 +9,6 @@ window.supabase = createClient(supabaseUrl, supabaseKey);
 
 window.jobData = {};
 
-// Load all jobs
 async function loadJobs() {
   const { data, error } = await supabase
     .from('jobs')
@@ -17,7 +16,7 @@ async function loadJobs() {
     .order('created_at', { ascending: false });
 
   if (error) {
-    document.getElementById('loading').innerHTML = `<p style="color:red;">Error loading jobs: ${error.message}</p>`;
+    console.error("Supabase Error:", error);
     return;
   }
 
@@ -29,18 +28,15 @@ async function loadJobs() {
     window.jobData[stateKey][job.category].push(job);
   });
 
-  if (window.renderJobs) window.renderJobs();
-  document.getElementById('loading').style.display = 'none';
+  if (window.app) window.app.renderStateSections(window.app.currentState);
 }
 
-// Real-time listener
+loadJobs();
+
+// Real-time updates
 supabase
-  .channel('public:jobs')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, payload => {
-    console.log('Real-time update:', payload);
+  .channel('jobs')
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => {
     loadJobs();
   })
   .subscribe();
-
-// Load on start
-loadJobs();
