@@ -67,9 +67,20 @@
           <div class="detail-row"><strong>State:</strong> ${job.state === 'central-govt' ? 'Central Government' : job.state.toUpperCase()}</div>
 
           <h3 style="margin-top:2rem; color:#667eea;">Eligibility</h3>
-          <p>${job.eligibility ? job.eligibility.replace(/\n/g, '<br>') : 'Check official notification'}</p>
-
-          <h3 style="margin-top:2rem; color:#667eea;">Important Dates</h3>
+         <div class="eligibility-section">
+              <h3 style="margin-top:2rem; color:#667eea;">Eligibility Criteria</h3>
+              <div class="eligibility-text">
+                ${job.eligibility 
+                  ? job.eligibility
+                      .replace(/<p>/gi, '')           // Remove <p>
+                      .replace(/<\/p>/gi, '<br><br>') // Convert </p> to double line break
+                      .replace(/<br>/gi, '<br>')      // Keep real <br>
+                      .replace(/\n/g, '<br>')         // Convert new lines
+                      .trim()
+                  : 'Check official notification'}
+              </div>
+            </div>
+           <h3 style="margin-top:2rem; color:#667eea;">Important Dates</h3>
           <p>${dates}</p>
 
           <h3 style="margin-top:2rem; color:#667eea;">Important Links</h3>
