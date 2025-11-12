@@ -24,12 +24,12 @@ class NEIJobPortal {
         const stateData = window.jobData[state] || {};
 
         const sectionsConfig = [
-            { id: `${state}-latest-jobs`, title: "Latest Jobs", data: stateData.latestJobs || [], icon: "Latest" },
-            { id: `${state}-results`, title: "Results", data: stateData.results || [], icon: "Results" },
-            { id: `${state}-admit-cards`, title: "Admit Cards", data: stateData.admitCards || [], icon: "Admit" },
-            { id: `${state}-answer-keys`, title: "Answer Key", data: stateData.answerKeys || [], icon: "Key" },
-            { id: `${state}-central-govt`, title: "Central Govt Jobs", data: stateData.centralGovtJobs || [], icon: "Central" },
-            { id: `${state}-private-jobs`, title: "Private Jobs", data: stateData.privateJobs || [], icon: "Private" }
+            { id: `${state}-latest-jobs`, title: "Latest Jobs", data: stateData.latestJobs || [], icon: "" },
+            { id: `${state}-results`, title: "Results", data: stateData.results || [], icon: "" },
+            { id: `${state}-admit-cards`, title: "Admit Cards", data: stateData.admitCards || [], icon: "" },
+            { id: `${state}-answer-keys`, title: "Answer Key", data: stateData.answerKeys || [], icon: "" },
+            { id: `${state}-central-govt`, title: "Central Govt Jobs", data: stateData.centralGovtJobs || [], icon: "" },
+            { id: `${state}-private-jobs`, title: "Private Jobs", data: stateData.privateJobs || [], icon: "" }
         ];
 
         this.sectionsContainer.innerHTML = sectionsConfig.map(section => `
