@@ -1,22 +1,21 @@
-// js/main.js - FINAL PRO VERSION (Fixed Dates + Auto Hide Expired Jobs)
+// js/main.js - FINAL FIXED VERSION (Real Supabase + Proper Dates + Hide Expired)
 class NEIJobPortal {
     constructor() {
         this.sectionsContainer = document.getElementById('sections-container');
         this.currentState = 'assam';
         this.centralGovtJobs = [];
-        this.stateWiseData = {};
+        this.allActiveJobs = [];
         window.app = this;
     }
 
     async init() {
-        await this.loadAllJobs();
+        await this.loadJobs();
         this.setupEventListeners();
         this.renderStateSections(this.currentState);
         document.querySelector(`.navbar a[data-state="${this.currentState}"]`).classList.add('active');
-        console.log('NEI Job Portal PRO - Expired Jobs Hidden + Dates Fixed!');
     }
 
-    async loadAllJobs() {
+    async loadJobs() {
         try {
             const { data, error } = await supabase
                 .from('jobs')
@@ -25,69 +24,64 @@ class NEIJobPortal {
 
             if (error) throw error;
 
-            const now = new Date();
-            now.setHours(0, 0, 0, 0); // Today at 00:00
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-            // Filter OUT expired jobs + extract central jobs
-            const activeJobs = data.filter(job => {
-                if (!job.last_date) return true; // No date = show
+            // Filter only ACTIVE jobs (last_date not passed)
+            this.allActiveJobs = data.filter(job => {
+                if (!job.last_date) return true;
                 const lastDate = new Date(job.last_date);
-                lastDate.setHours(23, 59, 59, 999); // End of day
-                return lastDate >= now;
+                return lastDate >= today;
             });
 
-            this.centralGovtJobs = activeJobs.filter(job => 
-                job.state === 'central-govt' || 
+            // Extract Central Govt Jobs
+            this.centralGovtJobs = this.allActiveJobs.filter(job =>
+                job.state === 'central-govt' ||
                 job.state?.toLowerCase().includes('central')
             );
 
-            this.buildStateData(activeJobs);
+            this.buildStateData();
 
         } catch (err) {
-            console.error('Supabase Error:', err);
-            this.sectionsContainer.innerHTML = '<p style="color:red;text-align:center;">Failed to load jobs.</p>';
+            console.error('Error loading jobs:', err);
+            this.sectionsContainer.innerHTML = '<p style="color:red;">Failed to load jobs.</p>';
         }
     }
 
-    buildStateData(allJobs) {
+    buildStateData() {
         const states = ['assam', 'arunachal', 'manipur', 'meghalaya', 'mizoram', 'nagaland', 'tripura', 'sikkim'];
-        this.stateWiseData = {};
+        window.jobData = {};
 
         states.forEach(state => {
-            const jobsInState = allJobs.filter(job => 
-                job.state && job.state.toLowerCase() === state.toLowerCase()
+            const stateJobs = this.allActiveJobs.filter(job =>
+                job.state?.toLowerCase() === state.toLowerCase()
             );
 
-            this.stateWiseData[state] = {
-                latestJobs: jobsInState.filter(j => 
-                    !['result', 'admit-card', 'answer-key', 'private'].includes(j.category || '')
-                ),
-                results: jobsInState.filter(j => j.category === 'result'),
-                admitCards: jobsInState.filter(j => j.category === 'admit-card'),
-                answerKeys: jobsInState.filter(j => j.category === 'answer-key'),
+            window.jobData[state] = {
+                latestJobs: stateJobs.filter(j => !['result', 'admit-card', 'answer-key', 'private'].includes(j.category || '')),
+                results: stateJobs.filter(j => j.category === 'result'),
+                admitCards: stateJobs.filter(j => j.category === 'admit-card'),
+                answerKeys: stateJobs.filter(j => j.category === 'answer-key'),
                 centralGovtJobs: this.centralGovtJobs,
-                privateJobs: jobsInState.filter(j => j.category === 'private')
+                privateJobs: stateJobs.filter(j => j.category === 'private')
             };
         });
-
-        window.jobData = this.stateWiseData;
     }
 
     renderStateSections(state) {
         this.currentState = state;
         document.querySelectorAll('.navbar a').forEach(a => a.classList.remove('active'));
-        const activeLink = document.querySelector(`.navbar a[data-state="${state}"]`);
-        if (activeLink) activeLink.classList.add('active');
+        document.querySelector(`.navbar a[data-state="${state}"]`)?.classList.add('active');
 
-        const data = this.stateWiseData[state] || {};
+        const stateData = window.jobData[state] || {};
 
         const sectionsConfig = [
-            { id: `${state}-latest-jobs`, title: "Latest Jobs", data: data.latestJobs || [], icon: "New" },
-            { id: `${state}-results`, title: "Results", data: data.results || [], icon: "Result" },
-            { id: `${state}-admit-cards`, title: "Admit Cards", data: data.admitCards || [], icon: "Card" },
-            { id: `${state}-answer-keys`, title: "Answer Key", data: data.answerKeys || [], icon: "Key" },
+            { id: `${state}-latest-jobs`, title: "Latest Jobs", data: stateData.latestJobs || [], icon: "New" },
+            { id: `${state}-results`, title: "Results", data: stateData.results || [], icon: "Result" },
+            { id: `${state}-admit-cards`, title: "Admit Cards", data: stateData.admitCards || [], icon: "Card" },
+            { id: `${state}-answer-keys`, title: "Answer Key", data: stateData.answerKeys || [], icon: "Key" },
             { id: `${state}-central-govt`, title: "Central Govt Jobs", data: this.centralGovtJobs, icon: "India Flag" },
-            { id: `${state}-private-jobs`, title: "Private Jobs", data: data.privateJobs || [], icon: "Briefcase" }
+            { id: `${state}-private-jobs`, title: "Private Jobs", data: stateData.privateJobs || [], icon: "Briefcase" }
         ];
 
         this.sectionsContainer.innerHTML = sectionsConfig.map(section => `
@@ -105,26 +99,26 @@ class NEIJobPortal {
 
     renderJobItems(jobs) {
         if (!jobs || jobs.length === 0) {
-            return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No active jobs available</p>';
+            return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No active jobs</p>';
         }
 
         return jobs.map(job => {
-            const lastDateRaw = job.last_date;
             let lastDateHTML = '<span style="color:#95a5a6;">Date Not Announced</span>';
-
-            if (lastDateRaw) {
-                const dateObj = new Date(lastDateRaw);
-                const formatted = dateObj.toLocaleDateString('en-IN', {
+            if (job.last_date) {
+                const date = new Date(job.last_date);
+                const formatted = date.toLocaleDateString('en-IN', {
                     day: 'numeric', month: 'short', year: 'numeric'
                 });
-                const daysLeft = Math.ceil((dateObj - new Date()) / (1000 * 60 * 60 * 24));
+                const daysLeft = Math.ceil((date - new Date()) / (1000 * 60 * 60 * 24));
 
                 let color = '#e74c3c';
                 if (daysLeft > 7) color = '#27ae60';
                 else if (daysLeft > 3) color = '#f39c12';
 
-                lastDateHTML = `Last Date: <strong style="color:${color};">${formatted}</strong> 
-                               ${daysLeft > 0 ? `<small>(${daysLeft} days left)</small>` : ''}`;
+                lastDateHTML = `
+                    Last Date: <strong style="color:${color};">${formatted}</strong>
+                    ${daysLeft > 0 ? `<small>(${daysLeft} days left)</small>` : ''}
+                `;
             }
 
             const status = job.status || 'soon';
@@ -135,16 +129,12 @@ class NEIJobPortal {
                 soon: 'Coming Soon'
             }[status] || 'Soon';
 
-            const statusClass = status === 'start' ? 'status-start' : 
-                               status === 'closing' ? 'status-closing' : 
-                               status === 'out' ? 'status-out' : 'status-soon';
-
             return `
-                <a href="pages/detail.html?id=${job.id}" class="job-item" data-id="${job.id}">
+                <a href="pages/detail.html?id=${job.id}" class="job-item">
                     <div class="job-title">${job.title}</div>
                     <div class="job-meta">
                         <div class="job-lastdate">${lastDateHTML}</div>
-                        <div class="job-status ${statusClass}">${statusText}</div>
+                        <div class="job-status status-${status}">${statusText}</div>
                     </div>
                 </a>
             `;
@@ -153,18 +143,17 @@ class NEIJobPortal {
 
     setupEventListeners() {
         document.querySelectorAll('.navbar a[data-state]').forEach(link => {
-            link.addEventListener('click', (e) => {
+            link.addEventListener('click', e => {
                 e.preventDefault();
-                const state = link.getAttribute('data-state');
-                this.renderStateSections(state);
+                this.renderStateSections(link.dataset.state);
             });
         });
     }
 }
 
-// START
+// START APP
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof supabase === 'undefined') {
+    if (!window.supabase) {
         console.error('Supabase not loaded!');
         return;
     }
