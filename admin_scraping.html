@@ -6,52 +6,152 @@
   <title>Admin - Scraped Jobs</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { background:#f8f9fa; }
+    .top-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+  </style>
 </head>
 <body>
-  <div class="container mt-5">
-    <h2>Scraped Job Notifications</h2>
-    <button class="btn btn-primary mb-3" onclick="fetchScrapedJobs()">Refresh Scraped Jobs</button>
+  <div class="container mt-4">
+    <div class="top-bar">
+      <h2>Scraped Job Notifications</h2>
+      <div>
+        <span id="admin-email" class="me-3"></span>
+        <button id="logoutBtn" class="btn btn-outline-danger btn-sm">Logout</button>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <button id="refreshBtn" class="btn btn-primary">Refresh Scraped Jobs</button>
+      <span id="status" class="ms-3 text-muted"></span>
+    </div>
 
     <div id="jobs-list"></div>
   </div>
 
   <script>
-    const supabase = supabase.createClient('https://enfzymosvlrmfluwidbj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuZnp5bW9zdmxybWZsdXdpZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTU1ODYsImV4cCI6MjA3NzkzMTU4Nn0._Mf8tyGBmcVgYPDTinF-UVD-HJD3-9OB90IAPJ5Dyx4
-');
+    // Replace with your project's URL and anon key (rotate key if exposed)
+    const SUPABASE_URL = 'https://enfzymosvlrmfluwidbj.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuZnp5bW9zdmxybWZsdXdpZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTU1ODYsImV4cCI6MjA3NzkzMTU4Nn0._Mf8tyGBmcVgYPDTinF-UVD-HJD3-9OB90IAPJ5Dyx4';
 
+    // Initialize Supabase (UMD global is Supabase when using the CDN bundle)
+    const supabase = Supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Utility escaping helpers
+    function escapeHtml(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+    function escapeAttr(str) {
+      return escapeHtml(str).replace(/"/g,'&quot;');
+    }
+
+    // Show status messages
+    function setStatus(msg, isError = false) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.style.color = isError ? 'crimson' : '';
+      setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, 4000);
+    }
+
+    // Fetch scraped jobs and render
     async function fetchScrapedJobs() {
-      const { data: jobs, error } = await supabase.from('scraped_jobs').select('*').order('created_at', { ascending: false });
+      setStatus('Loading...');
+      const { data: jobs, error } = await supabase
+        .from('scraped_jobs')
+        .select('id,title,source,deadline,url,description,application_link,created_at')
+        .order('created_at', { ascending: false });
+
       if (error) {
-        alert('Error fetching jobs: ' + error.message);
+        setStatus('Error fetching jobs: ' + error.message, true);
+        console.error(error);
         return;
       }
 
       const container = document.getElementById('jobs-list');
-      container.innerHTML = jobs.map(job => `
-        <div class="card mb-3">
-          <div class="card-body">
-            <h5 class="card-title">${job.title}</h5>
-            <p><strong>Source:</strong> ${job.source}</p>
-            <p><strong>Deadline:</strong> ${job.deadline}</p>
-            <p><strong>Link:</strong> <a href="${job.url}" target="_blank">View Original</a></p>
-            <button class="btn btn-success btn-sm" onclick='importJob(${JSON.stringify(job).replace(/'/g, "\\'")})'>
-              Add to Website
-            </button>
+      container.innerHTML = (jobs || []).map(job => {
+        const title = escapeHtml(job.title || 'Untitled');
+        const source = escapeHtml(job.source || 'Unknown');
+        const deadline = escapeHtml(job.deadline || 'N/A');
+        const url = escapeAttr(job.url || '#');
+        const description = escapeHtml(job.description || '');
+        const created_at = escapeHtml(job.created_at ? new Date(job.created_at).toLocaleString() : '');
+
+        return `
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <h5 class="card-title mb-1">${title}</h5>
+                  <div class="text-muted small mb-2">Source: ${source} • Created: ${created_at}</div>
+                </div>
+                <div class="text-end">
+                  <a class="btn btn-sm btn-outline-primary mb-2" href="${url}" target="_blank" rel="noopener">View Original</a>
+                  <br/>
+                  <button class="btn btn-success btn-sm" onclick='importJob(${JSON.stringify(job).replace(/'/g,"\\'")})'>Add to Website</button>
+                </div>
+              </div>
+              <p class="card-text mt-2">${description}</p>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+
+      if (!jobs || jobs.length === 0) {
+        container.innerHTML = '<div class="alert alert-info">No scraped jobs found.</div>';
+      }
+      setStatus('Loaded ' + (jobs ? jobs.length : 0) + ' jobs');
     }
 
+    // Cache job and redirect to admin form
     function importJob(job) {
-      if (confirm(`Import job: ${job.title}?`)) {
+      if (!job) return;
+      if (confirm(`Import job: ${job.title || 'Untitled'}?`)) {
         localStorage.setItem('importedJob', JSON.stringify(job));
-        window.location.href = '/admin.html#job-form';  // Redirect to your main admin job form
+        // Redirect to main admin page where a job form reads localStorage
+        window.location.href = '/admin.html#job-form';
         alert('Job cached! Now go to Add Job → it will auto-fill.');
       }
     }
 
-    // Auto-load on page open
-    window.onload = fetchScrapedJobs;
+    // Ensure the page is only visible to authenticated admins
+    async function requireAuth() {
+      const { data } = await supabase.auth.getSession();
+      const session = data?.session;
+      if (!session) {
+        // Not authenticated — redirect to login/admin page
+        window.location.href = '/admin.html';
+        return false;
+      }
+
+      // Optionally: check a claim or role in the JWT to ensure admin access
+      const accessToken = session.access_token;
+      try {
+        // Minimal decode to show email in UI (no external libs)
+        const payload = JSON.parse(atob(accessToken.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+        document.getElementById('admin-email').textContent = payload.email ? `Signed in as ${payload.email}` : 'Signed in';
+      } catch (e) {
+        document.getElementById('admin-email').textContent = 'Signed in';
+      }
+
+      return true;
+    }
+
+    // Logout handler
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      window.location.href = '/admin.html';
+    });
+
+    // Refresh button
+    document.getElementById('refreshBtn').addEventListener('click', fetchScrapedJobs);
+
+    // On load: require auth, then fetch
+    window.addEventListener('load', async () => {
+      const ok = await requireAuth();
+      if (ok) {
+        fetchScrapedJobs();
+      }
+    });
   </script>
 </body>
 </html>
