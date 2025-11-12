@@ -538,6 +538,23 @@
         if (data.session) showPanel(data.session.user.email);
       });
     }, 500);
+    // for webscraping autofill
+  window.addEventListener('load', () => {
+  const cached = localStorage.getItem('importedJob');
+  if (cached && window.location.hash.includes('job-form')) {
+    const job = JSON.parse(cached);
+
+    // Auto-fill your form fields (adjust IDs if yours differ)
+    document.getElementById('job-title').value = job.title || '';
+    document.getElementById('job-source').value = job.source || '';
+    document.getElementById('job-deadline').value = job.deadline || '';
+    document.getElementById('job-link').value = job.url || '';
+    document.getElementById('job-description').value = job.description || job.title;
+
+    alert('Job auto-filled from scraper! Edit and Save.');
+    localStorage.removeItem('importedJob');  // Clear after use
+  }
+});
   </script>
 </body>
 </html>
