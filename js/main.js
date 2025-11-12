@@ -1,4 +1,4 @@
-// js/main.js - FINAL FIXED VERSION (ALL JOBS SHOW + CENTRAL IN EVERY STATE)
+// js/main.js - FINAL INDIAN DATE FIX + ALL JOBS SHOW + CENTRAL EVERYWHERE
 class NEIJobPortal {
     constructor() {
         this.sectionsContainer = document.getElementById('sections-container');
@@ -13,8 +13,8 @@ class NEIJobPortal {
         await this.loadAllJobs();
         this.setupEventListeners();
         this.renderStateSections(this.currentState);
-        document.querySelector(`.navbar a[data-state="${this.currentState}"]`).classList.add('active');
-        console.log('NEI Job Portal FULLY LOADED - ALL JOBS VISIBLE!');
+        document.querySelector(`.navbar a[data-state="${this.currentState}"]`)?.classList.add('active');
+        console.log('%cNEI JOB PORTAL LOADED SUCCESSFULLY!', 'color: #27ae60; font-size: 18px; font-weight: bold');
     }
 
     async loadAllJobs() {
@@ -25,46 +25,68 @@ class NEIJobPortal {
                 .order('created_at', { ascending: false });
 
             if (error) throw error;
+            if (!data || data.length === 0) {
+                this.sectionsContainer.innerHTML = '<p style="text-align:center; color:#95a5a6;">No jobs found.</p>';
+                return;
+            }
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            // Filter active jobs only
-            this.allJobs = data.filter(job => {
-                if (!job.lastdate) return true;
-                const d = this.parseDate(job.lastdate);
-                return d && d >= today;
-            }).map(job => ({
-                ...job,
-                parsedDate: this.parseDate(job.lastdate)
-            }));
+            // Parse dates + filter active jobs
+            this.allJobs = data
+                .map(job => {
+                    const parsed = this.parseDate(job.lastdate);
+                    return { ...job, parsedDate: parsed };
+                })
+                .filter(job => {
+                    if (!job.parsedDate) return true; // No date = show
+                    return job.parsedDate >= today;
+                });
 
-            // Extract Central Govt Jobs
-            this.centralGovtJobs = this.allJobs.filter(job =>
-                job.state === 'central-govt' ||
-                job.state?.toLowerCase().includes('central') ||
-                job.state?.toLowerCase().includes('all india')
-            );
+            // CENTRAL GOVT JOBS - ULTRA FLEXIBLE
+            this.centralGovtJobs = this.allJobs.filter(job => {
+                const s = (job.state || '').toLowerCase().trim();
+                return s.includes('central') || 
+                       s.includes('upsc') || 
+                       s.includes('ssc') || 
+                       s.includes('railway') || 
+                       s.includes('ibps') || 
+                       s.includes('all india');
+            });
 
-            // Build state-wise data
             this.buildStateData();
 
         } catch (err) {
-            console.error('Load Error:', err);
-            this.sectionsContainer.innerHTML = '<p style="color:red;text-align:center;">Failed to load jobs.</p>';
+            console.error('Supabase Error:', err);
+            this.sectionsContainer.innerHTML = '<p style="color:red; text-align:center;">Failed to load jobs.</p>';
         }
     }
 
+    // SUPER DATE PARSER - WORKS WITH ALL INDIAN FORMATS
     parseDate(raw) {
         if (!raw) return null;
         const str = String(raw).trim();
-        const normalized = str
-            .replace(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/, '$1/$2/$3')
-            .replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s,]*(\d{1,2})[\s,]*(\d{4})/i, '$2 $1 $3')
-            .replace(/(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})/, '$2/$3/$1');
+        if (!str) return null;
 
-        const d = new Date(normalized);
-        return !isNaN(d) ? d : null;
+        // 1. Try direct parse
+        let d = new Date(str);
+        if (!isNaN(d)) return d;
+
+        // 2. Handle DD-MM-YYYY, DD/MM/YYYY, DD.MM.YYYY → convert to YYYY-MM-DD
+        const match = str.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})$/);
+        if (match) {
+            const [_, day, month, year] = match;
+            d = new Date(`${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')} 23:59:59`);
+            if (!isNaN(d)) return d;
+        }
+
+        // 3. Handle "20 November 2025", "November 20, 2025", "20th Nov 2025"
+        const clean = str.replace(/(st|nd|rd|th)/gi, '');
+        d = new Date(clean);
+        if (!isNaN(d)) return d;
+
+        return null;
     }
 
     buildStateData() {
@@ -73,18 +95,23 @@ class NEIJobPortal {
         window.jobData = {};
 
         states.forEach(state => {
-            const stateJobs = this.allJobs.filter(job =>
-                job.state && job.state.toLowerCase() === state.toLowerCase()
-            );
+            const lowerState = state.toLowerCase();
+            const stateJobs = this.allJobs.filter(job => {
+                const jobState = (job.state || '').toLowerCase().trim();
+                return jobState === lowerState || 
+                       jobState.includes(lowerState) ||
+                       jobState === lowerState + ' govt' ||
+                       jobState === 'assam' && lowerState === 'assam'; // extra safety
+            });
 
             this.stateWiseData[state] = {
                 latestJobs: stateJobs.filter(j => 
-                    !['result', 'admit-card', 'answer-key', 'private'].includes(j.category || '')
+                    !j.category || !['result', 'admit-card', 'answer-key', 'private'].includes(j.category)
                 ),
                 results: stateJobs.filter(j => j.category === 'result'),
                 admitCards: stateJobs.filter(j => j.category === 'admit-card'),
                 answerKeys: stateJobs.filter(j => j.category === 'answer-key'),
-                centralGovtJobs: this.centralGovtJobs,  // INJECTED IN EVERY STATE
+                centralGovtJobs: this.centralGovtJobs,  // ← EVERY STATE GETS THIS
                 privateJobs: stateJobs.filter(j => j.category === 'private')
             };
         });
@@ -131,13 +158,11 @@ class NEIJobPortal {
 
         return jobs.map(job => {
             let lastDateHTML = '<span style="color:#95a5a6;">Date Not Announced</span>';
+
             if (job.parsedDate) {
                 const d = job.parsedDate;
-                const day = String(d.getDate()).padStart(2, '0');
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const year = d.getFullYear();
-                const formatted = `${day}/${month}/${year}`;
-                const daysLeft = Math.ceil((d - today) / (86400000));
+                const formatted = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+                const daysLeft = Math.ceil((d - today) / 86400000);
 
                 let color = '#e74c3c';
                 if (daysLeft > 7) color = '#27ae60';
@@ -179,10 +204,10 @@ class NEIJobPortal {
     }
 }
 
-// START
+// START THE APP
 document.addEventListener('DOMContentLoaded', () => {
-    if (!window.supabase) {
-        console.error('Supabase not loaded!');
+    if (typeof supabase === 'undefined') {
+        console.error('Supabase client not loaded!');
         return;
     }
     new NEIJobPortal().init();
