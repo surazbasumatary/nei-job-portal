@@ -90,34 +90,43 @@ class NEIJobPortal {
     }
 
     buildStateData() {
-        const states = ['assam', 'arunachal', 'manipur', 'meghalaya', 'mizoram', 'nagaland', 'tripura', 'sikkim'];
-        this.stateWiseData = {};
-        window.jobData = {};
+    const states = [
+        'assam',
+        'arunachal-pradesh',  // ← NOW MATCHES YOUR DATABASE
+        'manipur',
+        'meghalaya',
+        'mizoram',
+        'nagaland',
+        'tripura',
+        'sikkim'
+    ];
+    this.stateWiseData = {};
+    window.jobData = {};
 
-        states.forEach(state => {
-            const lowerState = state.toLowerCase();
-            const stateJobs = this.allJobs.filter(job => {
-                const jobState = (job.state || '').toLowerCase().trim();
-                return jobState === lowerState || 
-                       jobState.includes(lowerState) ||
-                       jobState === lowerState + ' govt' ||
-                       jobState === 'assam' && lowerState === 'assam'; // extra safety
-            });
-
-            this.stateWiseData[state] = {
-                latestJobs: stateJobs.filter(j => 
-                    !j.category || !['result', 'admit-card', 'answer-key', 'private'].includes(j.category)
-                ),
-                results: stateJobs.filter(j => j.category === 'result'),
-                admitCards: stateJobs.filter(j => j.category === 'admit-card'),
-                answerKeys: stateJobs.filter(j => j.category === 'answer-key'),
-                centralGovtJobs: this.centralGovtJobs,  // ← EVERY STATE GETS THIS
-                privateJobs: stateJobs.filter(j => j.category === 'private')
-            };
+    states.forEach(state => {
+        const stateJobs = this.allJobs.filter(job => {
+            const jobState = (job.state || '').toLowerCase().trim();
+            const target = state.toLowerCase();
+            return jobState === target || 
+                   jobState.includes(target) || 
+                   jobState.replace(/\s+/g, '-') === target ||
+                   jobState === 'arunachal pradesh' && target === 'arunachal-pradesh';
         });
 
-        window.jobData = this.stateWiseData;
-    }
+        this.stateWiseData[state] = {
+            latestJobs: stateJobs.filter(j => 
+                !j.category || !['result', 'admit-card', 'answer-key', 'private'].includes(j.category)
+            ),
+            results: stateJobs.filter(j => j.category === 'result'),
+            admitCards: stateJobs.filter(j => j.category === 'admit-card'),
+            answerKeys: stateJobs.filter(j => j.category === 'answer-key'),
+            centralGovtJobs: this.centralGovtJobs,
+            privateJobs: stateJobs.filter(j => j.category === 'private')
+        };
+    });
+
+    window.jobData = this.stateWiseData;
+}
 
     renderStateSections(state) {
         this.currentState = state;
