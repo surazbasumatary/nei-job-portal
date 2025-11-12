@@ -99,65 +99,63 @@ class NEIJobPortal {
 
     renderJobItems(jobs) {
     if (!jobs || jobs.length === 0) {
-        return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No active jobs</p>';
+        return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No active jobs available</p>';
     }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
     return jobs.map(job => {
         let lastDateHTML = '<span style="color:#95a5a6;">Date Not Announced</span>';
-        
+        let isValidDate = false;
+        let jobDate = null;
+
         if (job.lastdate) {
-            // SUPER SMART DATE PARSER — Understands ALL formats
-            const raw = job.lastdate.trim();
-            let date = null;
+            const raw = String(job.lastdate).trim();
 
-            // Try common formats one by one
-            const formats = [
-                raw, // original
-                raw.replace(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/, '$1/$2/$3'), // 21/11/2025 → 21/11/2025
-                raw.replace(/(\d{1,2})\s*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s*(\d{4})/i, '$1 $2 $3'),
-                raw.replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s*(\d{1,2}),?\s*(\d{4})/i, '$2 $1 $3'),
-                raw.replace(/(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})/, '$2/$3/$1'), // YYYY-MM-DD
-            ];
+            // SMART PARSER: Handles 50+ formats
+            const parseDate = (str) => {
+                // Try direct
+                let d = new Date(str);
+                if (!isNaN(d)) return d;
 
-            for (let attempt of formats) {
-                date = new Date(attempt);
-                if (!isNaN(date.getTime())) break; // Valid date found!
-            }
+                // Normalize common patterns
+                const normalized = str
+                    .replace(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/, '$1/$2/$3')
+                    .replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s,]*(\d{1,2})[\s,]*(\d{4})/i, '$2 $1 $3')
+                    .replace(/(\d{4})[\/\-\.](\d{1,2})[\/\-\.](\d{1,2})/, '$2/$3/$1');
 
-            // Final fallback: let browser try
-            if (isNaN(date?.getTime())) {
-                date = new Date(raw);
-            }
+                d = new Date(normalized);
+                return !isNaN(d) ? d : null;
+            };
 
-            // If still invalid → skip formatting
-            if (!date || isNaN(date.getTime())) {
-                lastDateHTML = `<span style="color:#95a5a6;">Invalid Date: ${raw}</span>`;
-            } else {
-                // Now format as DD/MM/YYYY
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = date.getFullYear();
-                const formatted = `${day}/${month}/${year}`;  // 21/11/2025
+            jobDate = parseDate(raw);
+            if (jobDate && !isNaN(jobDate)) {
+                isValidDate = true;
+                jobDate.setHours(23, 59, 59, 999); // End of day
 
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                date.setHours(23, 59, 59, 999);
-
-                const daysLeft = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
-
-                // Hide expired jobs
-                if (daysLeft < 0) {
-                    return ''; // This hides expired jobs completely
+                // HIDE EXPIRED JOBS
+                if (jobDate < today) {
+                    return ''; // Completely remove expired job
                 }
 
+                const day = String(jobDate.getDate()).padStart(2, '0');
+                const month = String(jobDate.getMonth() + 1).padStart(2, '0');
+                const year = jobDate.getFullYear();
+                const formatted = `${day}/${month}/${year}`; // 21/11/2025
+
+                const daysLeft = Math.ceil((jobDate - today) / (1000 * 60 * 60 * 24));
+
                 let color = '#e74c3c'; // Red
-                if (daysLeft > 7) color = '#27ae60';      // Green
-                else if (daysLeft > 3) color = '#f39c12';  // Orange
+                if (daysLeft > 7) color = '#27ae60';     // Green
+                else if (daysLeft > 3) color = '#f39c12'; // Orange
 
                 lastDateHTML = `
                     Last Date: <strong style="color:${color};">${formatted}</strong>
                     ${daysLeft > 0 ? `<small>(${daysLeft} day${daysLeft > 1 ? 's' : ''} left)</small>` : ''}
                 `;
+            } else {
+                lastDateHTML = `<span style="color:#95a5a6;">Invalid: ${raw}</span>`;
             }
         }
 
@@ -169,19 +167,21 @@ class NEIJobPortal {
             soon: 'Coming Soon'
         }[status] || 'Soon';
 
-        // If job is expired → don't show it at all
-        if (lastDateHTML.includes('left') && lastDateHTML.includes('-')) return '';
+        const statusClass = `status-${status}`;
 
+        // Final HTML with proper structure
         return `
-            <a href="pages/detail.html?id=${job.id}" class="job-item">
+            <a href="pages/detail.html?id=${job.id}" class="job-item" data-id="${job.id}">
                 <div class="job-title">${job.title}</div>
                 <div class="job-meta">
                     <div class="job-lastdate">${lastDateHTML}</div>
-                    <div class="job-status status-${status}">${statusText}</div>
+                    <div class="job-status ${statusClass}">${statusText}</div>
                 </div>
             </a>
-        `.trim();
-    }).filter(Boolean).join(''); // Remove empty items
+        `;
+    })
+    .filter(item => item !== '') // Remove expired/empty jobs
+    .join('');
 }
     setupEventListeners() {
         document.querySelectorAll('.navbar a[data-state]').forEach(link => {
