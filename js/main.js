@@ -27,10 +27,10 @@ class NEIJobPortal {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
-            // Filter only ACTIVE jobs (last_date not passed)
+            // Filter only ACTIVE jobs (lastdate not passed)
             this.allActiveJobs = data.filter(job => {
-                if (!job.last_date) return true;
-                const lastDate = new Date(job.last_date);
+                if (!job.lastdate) return true;
+                const lastDate = new Date(job.lastdate);
                 return lastDate >= today;
             });
 
@@ -104,8 +104,8 @@ class NEIJobPortal {
 
         return jobs.map(job => {
             let lastDateHTML = '<span style="color:#95a5a6;">Date Not Announced</span>';
-            if (job.last_date) {
-                const date = new Date(job.last_date);
+            if (job.lastdate) {
+                const date = new Date(job.lastdate);
                 const formatted = date.toLocaleDateString('en-IN', {
                     day: 'numeric', month: 'short', year: 'numeric'
                 });
