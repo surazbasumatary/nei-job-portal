@@ -16,7 +16,8 @@
   </div>
 
   <script>
-    const supabase = supabase.createClient('https://your-project-id.supabase.co', 'your-anon-key');
+    const supabase = supabase.createClient('https://enfzymosvlrmfluwidbj.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVuZnp5bW9zdmxybWZsdXdpZGJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjIzNTU1ODYsImV4cCI6MjA3NzkzMTU4Nn0._Mf8tyGBmcVgYPDTinF-UVD-HJD3-9OB90IAPJ5Dyx4
+');
 
     async function fetchScrapedJobs() {
       const { data: jobs, error } = await supabase.from('scraped_jobs').select('*').order('created_at', { ascending: false });
