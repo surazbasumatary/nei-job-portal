@@ -135,23 +135,24 @@ class NEIJobPortal {
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-
-        if (type === 'result' || type === 'admit' || type === 'answerkey') {
-            const start = job.startdate ? this.formatDate(job.startdate) : 'Not Announced';
-            const end = job.lastdate ? this.formatDate(job.lastdate) : 'Not Announced';
-        
-            const cardClass = type === 'result' ? 'result-card' : 
-                             type === 'admit' ? 'admit-card' : 'answerkey-card';
-        
-            return `
-                <a href="pages/detail.html?id=${job.id}" class="job-item ${cardClass}">
-                    <div class="job-title">${job.title}</div>
-                    <div class="result-dates">
-                        Start: ${start} | End: ${end}
-                    </div>
-                </a>
-            `;
-        }
+        return jobs.map(job => {
+            // SPECIAL CARD FOR RESULTS / ADMIT / ANSWER KEY
+            if (type === 'result' || type === 'admit' || type === 'answerkey') {
+                const start = job.startdate ? this.formatDate(job.startdate) : 'Not Announced';
+                const end = job.lastdate ? this.formatDate(job.lastdate) : 'Not Announced';
+            
+                const cardClass = type === 'result' ? 'result-card' : 
+                                 type === 'admit' ? 'admit-card' : 'answerkey-card';
+            
+                return `
+                    <a href="pages/detail.html?id=${job.id}" class="job-item ${cardClass}">
+                        <div class="job-title">${job.title}</div>
+                        <div class="result-dates">
+                            Start: ${start} | End: ${end}
+                        </div>
+                    </a>
+                `;
+            }
 
             // NORMAL JOB CARD
             let lastDateHTML = '<span style="color:#95a5a6;">Date Not Announced</span>';
