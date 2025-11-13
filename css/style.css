@@ -139,7 +139,7 @@ body {
 /* JOB LIST — DOUBLE HEIGHT CARDS */
 .job-list {
     padding: 0.6rem;
-    max-height: 640px;        /* ← LIMIT HEIGHT */
+    max-height: 1040px;        /* ← LIMIT HEIGHT */
     overflow-y: auto;         /* ← ENABLE SCROLL */
     overflow-x: hidden;
 }
