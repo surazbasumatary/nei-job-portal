@@ -139,8 +139,9 @@ body {
 /* JOB LIST — DOUBLE HEIGHT CARDS */
 .job-list {
     padding: 0.6rem;
-    max-height: none !important;
-    overflow: visible !important;
+    max-height: 320px;        /* ← LIMIT HEIGHT */
+    overflow-y: auto;         /* ← ENABLE SCROLL */
+    overflow-x: hidden;
 }
 
 .job-item.compact-card {
@@ -153,7 +154,7 @@ body {
     margin: 0.5rem 0;
     box-shadow: 0 4px 15px rgba(0,0,0,0.06);
     transition: all 0.25s ease;
-    min-height: 65px; /* DOUBLE HEIGHT */
+    min-height: 68px; /* DOUBLE HEIGHT */
     text-decoration: none;
     color: var(--text);
 }
