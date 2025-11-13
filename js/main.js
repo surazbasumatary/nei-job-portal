@@ -128,32 +128,56 @@ class NEIJobPortal {
         `).join('');
     }
 
-    renderJobItems(jobs, type = '') {
-        if (!jobs || jobs.length === 0) {
-            return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No active jobs available</p>';
+    // === NORMAL JOBS (LATEST JOBS) ===
+// === NORMAL JOBS (LATEST JOBS) ===
+renderJobItems(jobs) {
+    if (!jobs || jobs.length === 0) {
+        return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No active jobs available</p>';
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return jobs.map(job => {
+        let dateText = '';
+        if (job.parsedDate) {
+            const d = job.parsedDate;
+            const formatted = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+            const daysLeft = Math.ceil((d - today) / 86400000);
+            const color = daysLeft > 7 ? '#27ae60' : daysLeft > 3 ? '#f39c12' : '#e74c3c';
+            dateText = `Last Date: <strong style="color:${color}">${formatted}</strong> <small>(${daysLeft} day${daysLeft > 1 ? 's' : ''} left)</small>`;
+        } else {
+            dateText = '<span style="color:#95a5a6;">Date Not Announced</span>';
         }
 
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return jobs.map(job => {
-            // SPECIAL CARD FOR RESULTS / ADMIT / ANSWER KEY
-            if (type === 'result' || type === 'admit' || type === 'answerkey') {
-                const start = job.startdate ? this.formatDate(job.startdate) : 'Not Announced';
-                const end = job.lastdate ? this.formatDate(job.lastdate) : 'Not Announced';
-            
-                const cardClass = type === 'result' ? 'result-card' : 
-                                 type === 'admit' ? 'admit-card' : 'answerkey-card';
-            
-                return `
-                    <a href="pages/detail.html?id=${job.id}" class="job-item ${cardClass}">
-                        <div class="job-title">${job.title}</div>
-                        <div class="result-dates">
-                            Start: ${start} | End: ${end}
-                        </div>
-                    </a>
-                `;
-            }
+        const status = job.status || 'soon';
+        const statusText = { start: 'Apply Now', closing: 'Last Few Days', out: 'Closed', soon: 'Coming Soon' }[status] || 'Soon';
 
+        return `
+            <a href="pages/detail.html?id=${job.id}" class="job-item compact-card">
+                <div class="job-title-inline">
+                    ${job.title} <span class="date-inline">${dateText}</span>
+                </div>
+                <div class="apply-btn">${statusText}</div>
+            </a>
+        `;
+    }).join('');
+}
+
+// === RESULT / ADMIT / ANSWER KEY ===
+if (type === 'result' || type === 'admit' || type === 'answerkey') {
+    const start = job.startdate ? this.formatDate(job.startdate) : 'Not Announced';
+    const end = job.lastdate ? this.formatDate(job.lastdate) : 'Not Announced';
+
+    return `
+        <a href="pages/detail.html?id=${job.id}" class="job-item compact-card">
+            <div class="job-title-inline">
+                ${job.title} 
+                <span class="date-inline">Start: ${start} | End: ${end}</span>
+            </div>
+        </a>
+    `;
+}
             // NORMAL JOB CARD
             let lastDateHTML = '<span style="color:#95a5a6;">Date Not Announced</span>';
             if (job.parsedDate) {
