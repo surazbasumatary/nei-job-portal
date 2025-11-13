@@ -139,26 +139,32 @@ class NEIJobPortal {
         return jobs.map(job => {
             // SPECIAL CARD FOR RESULTS / ADMIT / ANSWER KEY
             if (type === 'result' || type === 'admit' || type === 'answerkey') {
-                const start = job.startdate ? this.formatDate(job.startdate) : 'N/A';
-                const end = job.lastdate ? this.formatDate(job.lastdate) : 'N/A';
-                const pdfLink = job.notification || '#';
-                const specialLink = type === 'result' ? job.resultLink :
-                                  type === 'admit' ? job.admitCardLink :
-                                  type === 'answerkey' ? job.answerKeyLink : pdfLink;
-
-                return `
-                    <a href="pages/detail.html?id=${job.id}" class="job-item result-card">
-                        <div class="job-title">${job.title}</div>
-                        <div class="result-dates">
-                            <small>Start: ${start} | End: ${end}</small>
-                        </div>
-                        <div class="result-links">
-                            <a href="${pdfLink}" target="_blank" class="btn-small">Notification PDF</a>
-                            <a href="${specialLink}" target="_blank" class="btn-small btn-special">Download Result</a>
-                        </div>
-                    </a>
-                `;
-            }
+                    const start = job.startdate ? this.formatDate(job.startdate) : 'Not Announced';
+                    const end = job.lastdate ? this.formatDate(job.lastdate) : 'Not Announced';
+                    const pdfLink = job.notification || '#';
+                    const specialLink = type === 'result' ? (job.resultLink || pdfLink) :
+                                      type === 'admit' ? (job.admitCardLink || pdfLink) :
+                                      (job.answerKeyLink || pdfLink);
+                
+                    const cardClass = type === 'result' ? 'result-card' : 
+                                     type === 'admit' ? 'admit-card' : 'answerkey-card';
+                
+                    const buttonText = type === 'result' ? 'Download Result' : 
+                                      type === 'admit' ? 'Download Admit Card' : 'Download Answer Key';
+                
+                    return `
+                        <a href="pages/detail.html?id=${job.id}" class="job-item ${cardClass}">
+                            <div class="job-title">${job.title}</div>
+                            <div class="result-dates">
+                                Start: ${start} | End: ${end}
+                            </div>
+                            <div class="result-links">
+                                <a href="${pdfLink}" target="_blank" class="btn-small">Notification PDF</a>
+                                <a href="${specialLink}" target="_blank" class="btn-small btn-special">${buttonText}</a>
+                            </div>
+                        </a>
+                    `;
+                }
 
             // NORMAL JOB CARD
             let lastDateHTML = '<span style="color:#95a5a6;">Date Not Announced</span>';
