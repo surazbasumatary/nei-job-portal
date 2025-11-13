@@ -118,7 +118,10 @@ class NEIJobPortal {
         this.sectionsContainer.innerHTML = sectionsConfig.map(section => `
             <div class="section" id="${section.id}">
                 <div class="section-header">
-                    <h2>${section.icon} ${section.title}</h2>
+                   <h3 class="section-title-compact">
+                        ${section.icon} ${section.title} 
+                        ${section.data.length > 0 ? `<span class="count-inline">${section.data.length}</span>` : ''}
+                    </h3>
                     ${section.data.length > 0 ? `<span class="count-badge">${section.data.length}</span>` : ''}
                 </div>
                 <div class="job-list">
