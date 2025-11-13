@@ -181,7 +181,6 @@ renderJobItems(jobs, type = '') {
                     ${job.title}
                     <span class="date-inline">${dateText}</span>
                 </div>
-                <div class="apply-btn">${statusText}</div>
             </a>
         `;
     }).join('');
