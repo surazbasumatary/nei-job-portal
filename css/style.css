@@ -390,8 +390,8 @@ body {
 }
 
 .job-title-inline {
-    font-size: 0.95rem !important;
-    font-weight: 600 !important;
+    font-size: 0.75rem !important;
+    font-weight: 300 !important;
     color: #2c3e50 !important;
     line-height: 1.4 !important;
     flex: 1;
@@ -400,7 +400,7 @@ body {
 
 .date-inline {
     display: block;
-    font-size: 0.82rem !important;
+    font-size: 0.76rem !important;
     color: #5a67d8 !important;
     font-weight: 500 !important;
     background: #f0f2ff;
@@ -448,8 +448,8 @@ body {
 }
 
 .section-title-mini {
-    font-size: 0.98rem !important;
-    font-weight: 700 !important;
+    font-size: 0.75rem !important;
+    font-weight: 300 !important;
     color: white !important;
     margin: 0 !important;
     text-align: center;
