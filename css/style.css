@@ -147,7 +147,7 @@ body {
 
 .job-item:hover {
     background: var(--bg-light);
-    transform: translateX(5px);
+    transform: translateX(-2px);
 }
 
 .job-title {
