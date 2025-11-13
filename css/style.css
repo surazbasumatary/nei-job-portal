@@ -362,13 +362,7 @@ body {
     transform: translateY(-3px);
     box-shadow: 0 8px 20px rgba(0,0,0,0.18);
 }
-/* GLOBAL SMALLER FONT */
-.job-item {
-    font-size: 0.70rem !important;
-}
-.job-title { font-size: 0.72rem !important; }
-.result-dates { font-size: 0.55rem !important; }
-.job-meta { font-size: 0.63rem !important; }
+
 /* ULTRA COMPACT ONE-LINE CARD — EXACTLY LIKE SCREENSHOT */
 .compact-card {
     display: flex !important;
@@ -469,3 +463,10 @@ body {
         padding: 0.55rem 0.7rem !important;
     }
 }
+/* GLOBAL SMALLER FONT */
+.job-item {
+    font-size: 0.70rem !important;
+}
+.job-title { font-size: 0.70rem !important; }
+.result-dates { font-size: 0.55rem !important; }
+.job-meta { font-size: 0.60rem !important; }
