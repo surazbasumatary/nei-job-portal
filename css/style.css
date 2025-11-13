@@ -153,7 +153,7 @@ body {
     margin: 0.5rem 0;
     box-shadow: 0 4px 15px rgba(0,0,0,0.06);
     transition: all 0.25s ease;
-    min-height: 80px; /* DOUBLE HEIGHT */
+    min-height: 65px; /* DOUBLE HEIGHT */
     text-decoration: none;
     color: var(--text);
 }
