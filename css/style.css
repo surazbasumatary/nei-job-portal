@@ -151,9 +151,9 @@ body {
 }
 
 .job-title {
-    font-weight: 600;
+    font-weight: 300;
     margin-bottom: 0.5rem;
-    font-size: 0.80rem;
+    font-size: 0.20rem;
     line-height: 1.4;
 }
 
