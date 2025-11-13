@@ -465,7 +465,7 @@ body {
 }
 /* GLOBAL SMALLER FONT */
 .job-item {
-    font-size: 0.70rem !important;
+    font-size: 0.80rem !important;
 }
 .job-title { font-size: 0.75rem !important; }
 .result-dates { font-size: 0.55rem !important; }
