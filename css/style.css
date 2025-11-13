@@ -369,3 +369,72 @@ body {
 .job-title { font-size: 0.87rem !important; }
 .result-dates { font-size: 0.70rem !important; }
 .job-meta { font-size: 0.78rem !important; }
+/* ULTRA COMPACT ONE-LINE CARD — EXACTLY LIKE SCREENSHOT */
+.compact-card {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 1rem 1.2rem !important;
+    background: white !important;
+    border-radius: 16px !important;
+    margin: 0.7rem 0 !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07) !important;
+    transition: all 0.25s ease !important;
+    border: none !important;
+}
+
+.compact-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12) !important;
+    background: #fbfbff !important;
+}
+
+.job-title-inline {
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+    line-height: 1.4 !important;
+    flex: 1;
+    padding-right: 1rem;
+}
+
+.date-inline {
+    display: block;
+    font-size: 0.82rem !important;
+    color: #5a67d8 !important;
+    font-weight: 500 !important;
+    background: #f0f2ff;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    margin-top: 0.4rem;
+    white-space: nowrap;
+}
+
+.apply-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white !important;
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* MOBILE FIX */
+@media (max-width: 768px) {
+    .compact-card {
+        flex-direction: column !important;
+        text-align: center !important;
+        padding: 1.2rem !important;
+    }
+    .job-title-inline {
+        padding-right: 0 !important;
+    }
+    .date-inline {
+        margin: 0.5rem 0 !important;
+    }
+    .apply-btn {
+        margin-top: 0.5rem;
+    }
+}
