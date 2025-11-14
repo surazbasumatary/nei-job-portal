@@ -111,44 +111,38 @@
       font-size: 1rem;
     }
 
-    /* COMPACT TITLES */
-    .job-title {
-      font-size: 1.1rem;
-      font-weight: 600;
+    /* BOLD HEADINGS */
+    .desc-heading {
+      font-size: 1.12rem;
+      font-weight: 700;
       color: var(--primary);
-      margin: 1rem 0 0.4rem 0;
-      padding-bottom: 0.3rem;
-      border-bottom: 2px solid #e6ecff;
+      margin: 1.2rem 0 0.5rem 0;
       line-height: 1.4;
     }
 
-    .job-title strong {
-      color: var(--primary);
-    }
-
-    /* COMPACT PARAGRAPHS */
-    .job-para {
-      margin: 0.3rem 0;
-      line-height: 1.5;
+    /* PARAGRAPHS */
+    .desc-para {
+      margin: 0.4rem 0;
+      line-height: 1.6;
       font-size: 1rem;
     }
 
-    /* COMPACT BULLETS */
-    .job-list {
-      margin: 0.5rem 0 0.8rem 1.2rem;
+    /* BULLETS */
+    .desc-list {
+      margin: 0.6rem 0 1rem 1.2rem;
       padding-left: 0;
       list-style: none;
     }
 
-    .job-list li {
+    .desc-list li {
       position: relative;
-      padding-left: 1.2rem;
-      margin: 0.35rem 0;
-      line-height: 1.5;
+      padding-left: 1.3rem;
+      margin: 0.4rem 0;
+      line-height: 1.6;
       font-size: 1rem;
     }
 
-    .job-list li::before {
+    .desc-list li::before {
       content: "•";
       color: var(--primary);
       font-weight: bold;
@@ -182,20 +176,9 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.18);
     }
 
-    .btn::before {
-      font-weight: 900;
-      font-family: "Font Awesome 5 Free";
-      font-size: 0.9rem;
-    }
-
     .btn-apply { background: var(--success); }
-    .btn-apply::before { content: "Apply"; }
-
     .btn-noti { background: var(--warning); }
-    .btn-noti::before { content: "PDF"; }
-
     .btn-website { background: #3498db; }
-    .btn-website::before { content: "Web"; }
 
     .back-link {
       display: inline-block;
@@ -236,16 +219,11 @@
 </head>
 <body>
   <div class="container">
-    <!-- Loading -->
     <div id="loading" class="loading">
       <h2>Loading Job Details...</h2>
       <p>Please wait while we prepare the latest information.</p>
     </div>
-
-    <!-- Job Content -->
     <div id="job-content" style="display:none;"></div>
-
-    <!-- Ad -->
     <div style="text-align:center; margin:3rem 0;">
       <ins class="adsbygoogle"
            style="display:block"
@@ -264,8 +242,21 @@
     const urlParams = new URLSearchParams(window.location.search);
     const jobId = urlParams.get('id');
 
+    // LIST OF POSSIBLE HEADINGS
+    const HEADING_KEYWORDS = [
+      "Post", "Vacancies", "Vacancy", "Salary", "Remuneration", "Eligibility", "Eligibility criteria",
+      "Age Limit", "Fee", "Fees", "Apply Link", "Important Dates", "Instructions", "Selection Process",
+      "Document Requirements", "Debarment Conditions", "Contact", "Additional Notes"
+    ];
+
+    function isHeading(line) {
+      const clean = line.trim();
+      if (!clean) return false;
+      return HEADING_KEYWORDS.some(k => clean.startsWith(k + ":") || clean === k);
+    }
+
     function formatDescription(text) {
-      if (!text) return '<p>No description available. Check official notification.</p>';
+      if (!text) return '<p class="desc-para">No description available. Check official notification.</p>';
 
       const lines = text.split('\n');
       let result = '';
@@ -278,25 +269,25 @@
           continue;
         }
 
-        // TITLE: Ends with colon
-        if (line.endsWith(':')) {
+        // DETECT HEADING
+        if (isHeading(line)) {
           if (inList) { result += '</ul>'; inList = false; }
-          const title = line.slice(0, -1).trim();
-          result += `<p class="job-title"><strong>${title}:</strong></p>`;
+          const headingText = line.replace(/:$/, '').trim();
+          result += `<p class="desc-heading">${headingText}</p>`;
           continue;
         }
 
-        // BULLET: Starts with •, -, *
+        // DETECT BULLET
         if (line.match(/^[-*•]\s/)) {
-          if (!inList) { result += '<ul class="job-list">'; inList = true; }
+          if (!inList) { result += '<ul class="desc-list">'; inList = true; }
           const item = line.replace(/^[-*•]\s+/, '');
           result += `<li>${item}</li>`;
           continue;
         }
 
-        // NORMAL TEXT
+        // NORMAL PARAGRAPH
         if (inList) { result += '</ul>'; inList = false; }
-        result += `<p class="job-para">${line}</p>`;
+        result += `<p class="desc-para">${line}</p>`;
       }
 
       if (inList) result += '</ul>';
@@ -306,55 +297,36 @@
     async function loadJob() {
       if (!jobId) return showError("Invalid job link");
 
-      const { data: job, error } = await client
-        .from('jobs')
-        .select('*')
-        .eq('id', jobId)
-        .single();
-
+      const { data: job, error } = await client.from('jobs').select('*').eq('id', jobId).single();
       if (error || !job) return showError("Job not found.");
 
       document.title = `${job.title} - Apply by ${job.lastdate || 'Soon'} | NEI Job Portal`;
-
       const styledDesc = formatDescription(job.jobdescription);
 
       document.getElementById('job-content').innerHTML = `
         <div class="detail-box">
-          <div class="job-header">
-            <h1>${job.title || 'Untitled Job'}</h1>
-          </div>
+          <div class="job-header"><h1>${job.title || 'Untitled Job'}</h1></div>
 
           <div class="meta-grid">
-            <div class="meta-item">
-              <div class="meta-label">Application Starts</div>
-              <div class="meta-value start-date">${job.startdate || 'Not Announced'}</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">Last Date to Apply</div>
-              <div class="meta-value last-date">${job.lastdate || 'Not Announced'}</div>
-            </div>
-            <div class="meta-item">
-              <div class="meta-label">Post Name</div>
-              <div class="meta-value">${job.postname || 'Various Posts'}</div>
-            </div>
+            <div class="meta-item"><div class="meta-label">Start Date</div><div class="meta-value start-date">${job.startdate || 'N/A'}</div></div>
+            <div class="meta-item"><div class="meta-label">Last Date</div><div class="meta-value last-date">${job.lastdate || 'N/A'}</div></div>
+            <div class="meta-item"><div class="meta-label">Post</div><div class="meta-value">${job.postname || 'Various'}</div></div>
           </div>
 
           <div class="section">
             <h3>Full Job Description</h3>
-            <div class="desc-content">
-              ${styledDesc}
-            </div>
+            <div class="desc-content">${styledDesc}</div>
           </div>
 
           <h3 style="color:var(--primary); margin:2rem 0 1rem;">Important Links</h3>
           <div class="btn-group">
             ${job.apply ? `<a href="${job.apply}" target="_blank" class="btn btn-apply">Apply Online</a>` : ''}
-            ${job.notification ? `<a href="${job.notification}" target="_blank" class="btn btn-noti">Official Notification</a>` : ''}
-            ${job.official ? `<a href="${job.official}" target="_blank" class="btn btn-website">Official Website</a>` : ''}
+            ${job.notification ? `<a href="${job.notification}" target="_blank" class="btn btn-noti">Official PDF</a>` : ''}
+            ${job.official ? `<a href="${job.official}" target="_blank" class="btn btn-website">Website</a>` : ''}
           </div>
 
           <div style="text-align:center;">
-            <a href="../index.html" class="back-link">Back to All Jobs</a>
+            <a href="../index.html" class="back-link">Back to Jobs</a>
           </div>
         </div>
       `;
@@ -366,9 +338,8 @@
     function showError(msg) {
       document.getElementById('job-content').innerHTML = `
         <div class="detail-box" style="text-align:center; color:var(--danger); padding:4rem;">
-          <h2>Job Not Available</h2>
-          <p>${msg}</p>
-          <a href="../index.html" class="back-link">Back to Jobs</a>
+          <h2>Error</h2><p>${msg}</p>
+          <a href="../index.html" class="back-link">Back</a>
         </div>
       `;
       document.getElementById('loading').style.display = 'none';
