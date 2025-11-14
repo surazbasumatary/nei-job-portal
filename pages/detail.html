@@ -16,51 +16,166 @@
       --success: #27ae60;
       --warning: #f39c12;
       --dark: #2c3e50;
-      --light: #f4f6f9;
-      --box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --light: #f8f9ff;
+      --border: #e0e6f0;
+      --box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+      --radius: 20px;
+      --transition: all 0.3s ease;
     }
 
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--light); color: var(--dark); }
-    .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+      color: var(--dark);
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    .container { max-width: 920px; margin: 2rem auto; padding: 0 1rem; }
 
     .detail-box {
       background: white;
-      padding: 2.5rem;
-      border-radius: 20px;
+      padding: 3rem;
+      border-radius: var(--radius);
       box-shadow: var(--box-shadow);
+      border: 1px solid var(--border);
     }
 
-    .detail-box h1 {
+    .job-header h1 {
       color: var(--primary);
-      font-size: 2rem;
-      margin-bottom: 1rem;
+      font-size: 2.2rem;
+      margin: 0 0 1.5rem;
       font-weight: 700;
+      line-height: 1.3;
+      text-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
     }
 
-    .detail-row {
-      margin: 1rem 0;
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      background: #f8f9ff;
+      border-radius: 16px;
+      border-left: 5px solid var(--primary);
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .meta-label {
+      font-size: 0.9rem;
+      color: #7f8c8d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .meta-value {
       font-size: 1.1rem;
-      line-height: 1.7;
+      font-weight: 600;
+      color: var(--dark);
+      margin-top: 0.3rem;
     }
 
-    .detail-row strong {
+    .last-date { color: var(--danger); font-weight: 700; font-size: 1.2rem; }
+    .start-date { color: var(--success); font-weight: 700; }
+
+    .section {
+      margin: 2.5rem 0;
+      padding: 2rem;
+      background: var(--light);
+      border-radius: 18px;
+      border-left: 6px solid var(--primary);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.1);
+    }
+
+    .section h3 {
+      color: var(--primary);
+      margin: 0 0 1.2rem;
+      font-size: 1.55rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+    }
+
+    .section h3::before {
+      content: "◆";
+      font-size: 0.9rem;
+      color: var(--primary);
+    }
+
+    .desc-content {
+      font-size: 1.05rem;
+      line-height: 2;
+      color: #34495e;
+    }
+
+    .desc-content p {
+      margin: 1.2rem 0;
+    }
+
+    .desc-content strong {
       color: var(--dark);
       font-weight: 600;
     }
 
-    .last-date {
-      color: var(--danger);
-      font-weight: bold;
-      font-size: 1.3rem;
+    .desc-content em {
+      color: var(--primary);
+      font-style: italic;
     }
 
-    .start-date {
-      color: var(--success);
+    .desc-content ul, .desc-content ol {
+      margin: 1.3rem 0;
+      padding-left: 1.8rem;
+    }
+
+    .desc-content li {
+      margin: 0.7rem 0;
+      position: relative;
+      padding-left: 0.5rem;
+    }
+
+    .desc-content ul li::marker {
+      color: var(--primary);
       font-weight: bold;
+    }
+
+    .desc-content ol {
+      counter-reset: item;
+    }
+
+    .desc-content ol li::before {
+      content: counter(item) ".";
+      counter-increment: item;
+      color: var(--primary);
+      font-weight: bold;
+      position: absolute;
+      left: -1.8rem;
+      width: 1.8rem;
+      text-align: right;
+    }
+
+    .desc-content hr {
+      border: 0;
+      border-top: 2px dashed #ddd;
+      margin: 2rem 0;
+    }
+
+    .highlight {
+      background: linear-gradient(120deg, #fdf2a0 0%, #fdeaa8 100%);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 600;
     }
 
     .btn-group {
-      margin: 2rem 0;
+      margin: 2.5rem 0;
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
@@ -72,89 +187,78 @@
       color: white;
       font-weight: bold;
       text-decoration: none;
-      transition: all 0.3s ease;
-      display: inline-block;
-      text-align: center;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
 
     .btn:hover {
       transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    }
+
+    .btn::before {
+      font-weight: 900;
+      font-family: "Font Awesome 5 Free";
+      font-size: 0.9rem;
     }
 
     .btn-apply { background: var(--success); }
+    .btn-apply::before { content: "Apply"; }
+
     .btn-noti { background: var(--warning); }
+    .btn-noti::before { content: "PDF"; }
+
     .btn-website { background: #3498db; }
+    .btn-website::before { content: "Web"; }
 
     .back-link {
-      color: var(--primary);
-      text-decoration: underline;
-      font-weight: bold;
       display: inline-block;
       margin-top: 2rem;
-    }
-
-    .back-link:hover { color: #5a6fd8; }
-
-    .section-box {
-      background: #f8f9ff;
-      padding: 2rem;
-      border-radius: 18px;
-      margin: 2rem 0;
-      border-left: 6px solid var(--primary);
-      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
-    }
-
-    .section-box h3 {
       color: var(--primary);
-      margin-top: 0;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
+      text-decoration: none;
       font-weight: 600;
+      font-size: 1.1rem;
+      padding: 0.8rem 1.8rem;
+      border: 2px solid var(--primary);
+      border-radius: 50px;
+      transition: var(--transition);
     }
 
-    .desc-text {
-      font-size: 1.05rem;
-      line-height: 2;
-      color: var(--dark);
-    }
-
-    .desc-text p {
-      margin: 1rem 0;
-    }
-
-    .desc-text ul, .desc-text ol {
-      margin: 1rem 0;
-      padding-left: 1.5rem;
-    }
-
-    .desc-text li {
-      margin: 0.5rem 0;
+    .back-link:hover {
+      background: var(--primary);
+      color: white;
     }
 
     .loading {
       text-align: center;
       padding: 5rem;
       background: white;
-      border-radius: 20px;
+      border-radius: var(--radius);
       margin: 2rem auto;
       max-width: 900px;
       box-shadow: var(--box-shadow);
     }
 
     @media (max-width: 768px) {
-      .detail-box { padding: 1.5rem; }
-      .btn { padding: 0.8rem 1.5rem; font-size: 0.9rem; }
+      .detail-box { padding: 2rem; }
+      .meta-grid { grid-template-columns: 1fr; }
+      .btn { padding: 0.9rem 1.8rem; font-size: 0.95rem; }
       .btn-group { justify-content: center; }
+      .job-header h1 { font-size: 1.8rem; }
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
   <div class="container">
     <!-- Loading -->
     <div id="loading" class="loading">
-      <h2>Loading full job details...</h2>
-      <p>Please wait while we fetch the latest information.</p>
+      <h2>Loading Job Details...</h2>
+      <p>Please wait while we prepare the latest information.</p>
     </div>
 
     <!-- Job Content -->
@@ -179,6 +283,35 @@
     const urlParams = new URLSearchParams(window.location.search);
     const jobId = urlParams.get('id');
 
+    function formatDescription(text) {
+      if (!text) return '<p>No description available. Check official notification.</p>';
+
+      return text
+        // Bold headings: "Post Name:" → <strong>Post Name:</strong>
+        .replace(/^(.*?):/gm, '<strong>$1:</strong>')
+
+        // Highlight salary, age, etc.
+        .replace(/\b(Salary|Emoluments|Pay|Fee|Age Limit|Vacancies?|Posts?)\b/gi, '<span class="highlight">$1</span>')
+
+        // Bullets: • text → <li>
+        .replace(/^•\s*(.+)$/gm, '<li>$1</li>')
+
+        // Wrap lists
+        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+        .replace(/<\/li><li>/g, '</li><li>')
+
+        // Paragraphs
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>')
+
+        // Wrap in p
+        .trim()
+        .replace(/^(.+)/, '<p>$1</p>')
+        .replace(/<p><ul>/g, '<ul>')
+        .replace(/<\/ul><\/p>/g, '</ul>')
+        .replace(/<p><\/p>/g, '');
+    }
+
     async function loadJob() {
       if (!jobId) return showError("Invalid job link");
 
@@ -188,52 +321,44 @@
         .eq('id', jobId)
         .single();
 
-      if (error || !job) return showError("Job not found or deleted.");
+      if (error || !job) return showError("Job not found.");
 
-      // Update page title
-      document.title = `${job.title} - Last Date: ${job.lastdate || 'Soon'} | NEI Job Portal`;
+      document.title = `${job.title} - Apply by ${job.lastdate || 'Soon'} | NEI Job Portal`;
 
-      // Clean Job Description (preserve formatting)
-      const cleanDesc = job.jobdescription
-        ? job.jobdescription
-            .replace(/\n\n/g, '</p><p>')
-            .replace(/\n/g, '<br>')
-            .trim()
-        : 'No detailed description available. Please check the official notification.';
+      const styledDesc = formatDescription(job.jobdescription);
 
-      // Render job
       document.getElementById('job-content').innerHTML = `
         <div class="detail-box">
-          <h1>${job.title || 'Untitled Job'}</h1>
-
-          <!-- Dates -->
-          <div class="detail-row">
-            <strong>Application Start Date:</strong> 
-            <span class="start-date">${job.startdate || 'Not Announced'}</span>
-          </div>
-          <div class="detail-row">
-            <strong>Last Date to Apply:</strong> 
-            <span class="last-date">${job.lastdate || 'Not Announced'}</span>
+          <div class="job-header">
+            <h1>${job.title || 'Untitled Job'}</h1>
           </div>
 
-          <!-- Post Name -->
-          <div class="detail-row">
-            <strong>Post Name:</strong> ${job.postname || 'Various Posts'}
-          </div>
-
-          <!-- Job Description -->
-          <div class="section-box">
-            <h3>Job Description</h3>
-            <div class="desc-text">
-              <p>${cleanDesc}</p>
+          <div class="meta-grid">
+            <div class="meta-item">
+              <div class="meta-label">Application Starts</div>
+              <div class="meta-value start-date">${job.startdate || 'Not Announced'}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Last Date to Apply</div>
+              <div class="meta-value last-date">${job.lastdate || 'Not Announced'}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Post Name</div>
+              <div class="meta-value">${job.postname || 'Various Posts'}</div>
             </div>
           </div>
 
-          <!-- Important Links -->
-          <h3 style="color:var(--primary); margin-top:2rem;">Important Links</h3>
+          <div class="section">
+            <h3>Full Job Description</h3>
+            <div class="desc-content">
+              ${styledDesc}
+            </div>
+          </div>
+
+          <h3 style="color:var(--primary); margin:2rem 0 1rem;">Important Links</h3>
           <div class="btn-group">
             ${job.apply ? `<a href="${job.apply}" target="_blank" class="btn btn-apply">Apply Online</a>` : ''}
-            ${job.notification ? `<a href="${job.notification}" target="_blank" class="btn btn-noti">Official Notification (PDF)</a>` : ''}
+            ${job.notification ? `<a href="${job.notification}" target="_blank" class="btn btn-noti">Official Notification</a>` : ''}
             ${job.official ? `<a href="${job.official}" target="_blank" class="btn btn-website">Official Website</a>` : ''}
           </div>
 
@@ -243,15 +368,14 @@
         </div>
       `;
 
-      // Show content
       document.getElementById('loading').style.display = 'none';
       document.getElementById('job-content').style.display = 'block';
     }
 
     function showError(msg) {
       document.getElementById('job-content').innerHTML = `
-        <div class="detail-box" style="text-align:center; color:var(--danger);">
-          <h2>Error</h2>
+        <div class="detail-box" style="text-align:center; color:var(--danger); padding:4rem;">
+          <h2>Job Not Available</h2>
           <p>${msg}</p>
           <a href="../index.html" class="back-link">Back to Jobs</a>
         </div>
@@ -260,7 +384,6 @@
       document.getElementById('job-content').style.display = 'block';
     }
 
-    // Load job on page load
     loadJob();
   </script>
 </body>
