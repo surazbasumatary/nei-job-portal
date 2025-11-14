@@ -20,7 +20,6 @@
       --border: #e0e6f0;
       --box-shadow: 0 12px 35px rgba(0,0,0,0.08);
       --radius: 20px;
-      --transition: all 0.3s ease;
     }
 
     body {
@@ -47,7 +46,6 @@
       margin: 0 0 1.5rem;
       font-weight: 700;
       line-height: 1.3;
-      text-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
     }
 
     .meta-grid {
@@ -101,7 +99,6 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      position: relative;
     }
 
     .section h3::before {
@@ -111,67 +108,52 @@
     }
 
     .desc-content {
-      font-size: 1.05rem;
-      line-height: 2;
-      color: #34495e;
+      font-size: 1rem;
     }
 
-    .desc-content p {
-      margin: 1.2rem 0;
-    }
-
-    .desc-content strong {
-      color: var(--dark);
+    /* COMPACT TITLES */
+    .job-title {
+      font-size: 1.1rem;
       font-weight: 600;
-    }
-
-    .desc-content em {
       color: var(--primary);
-      font-style: italic;
+      margin: 1rem 0 0.4rem 0;
+      padding-bottom: 0.3rem;
+      border-bottom: 2px solid #e6ecff;
+      line-height: 1.4;
     }
 
-    .desc-content ul, .desc-content ol {
-      margin: 1.3rem 0;
-      padding-left: 1.8rem;
+    .job-title strong {
+      color: var(--primary);
     }
 
-    .desc-content li {
-      margin: 0.7rem 0;
+    /* COMPACT PARAGRAPHS */
+    .job-para {
+      margin: 0.3rem 0;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    /* COMPACT BULLETS */
+    .job-list {
+      margin: 0.5rem 0 0.8rem 1.2rem;
+      padding-left: 0;
+      list-style: none;
+    }
+
+    .job-list li {
       position: relative;
-      padding-left: 0.5rem;
+      padding-left: 1.2rem;
+      margin: 0.35rem 0;
+      line-height: 1.5;
+      font-size: 1rem;
     }
 
-    .desc-content ul li::marker {
-      color: var(--primary);
-      font-weight: bold;
-    }
-
-    .desc-content ol {
-      counter-reset: item;
-    }
-
-    .desc-content ol li::before {
-      content: counter(item) ".";
-      counter-increment: item;
+    .job-list li::before {
+      content: "•";
       color: var(--primary);
       font-weight: bold;
       position: absolute;
-      left: -1.8rem;
-      width: 1.8rem;
-      text-align: right;
-    }
-
-    .desc-content hr {
-      border: 0;
-      border-top: 2px dashed #ddd;
-      margin: 2rem 0;
-    }
-
-    .highlight {
-      background: linear-gradient(120deg, #fdf2a0 0%, #fdeaa8 100%);
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-weight: 600;
+      left: 0;
     }
 
     .btn-group {
@@ -187,7 +169,7 @@
       color: white;
       font-weight: bold;
       text-decoration: none;
-      transition: var(--transition);
+      transition: all 0.3s ease;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
@@ -225,7 +207,7 @@
       padding: 0.8rem 1.8rem;
       border: 2px solid var(--primary);
       border-radius: 50px;
-      transition: var(--transition);
+      transition: all 0.3s;
     }
 
     .back-link:hover {
@@ -242,18 +224,6 @@
       max-width: 900px;
       box-shadow: var(--box-shadow);
     }
-    .section-title {
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: var(--primary);
-      margin: 1.8rem 0 0.8rem;
-      padding-bottom: 0.4rem;
-      border-bottom: 2px solid #e6ecff;
-    }
-    
-    .section-title strong {
-      color: var(--primary);
-    }
 
     @media (max-width: 768px) {
       .detail-box { padding: 2rem; }
@@ -263,7 +233,6 @@
       .job-header h1 { font-size: 1.8rem; }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
   <div class="container">
@@ -296,58 +265,44 @@
     const jobId = urlParams.get('id');
 
     function formatDescription(text) {
-        if (!text) return '<p>No description available. Check official notification.</p>';
-      
-        const lines = text.split('\n');
-        let result = '';
-        let inList = false;
-      
-        for (let line of lines) {
-          line = line.trim();
-      
-          // SKIP EMPTY LINES
-          if (!line) {
-            if (inList) {
-              result += '</ul>';
-              inList = false;
-            }
-            continue;
-          }
-      
-          // DETECT PARAGRAPH TITLE: Ends with colon
-          const titleMatch = line.match(/^(.+?):$/);
-          if (titleMatch) {
-            if (inList) {
-              result += '</ul>';
-              inList = false;
-            }
-            result += `<p class="section-title"><strong>${titleMatch[1]}:</strong></p>`;
-            continue;
-          }
-      
-          // DETECT BULLET POINT
-          if (line.startsWith('•') || line.match(/^[-*•]\s/)) {
-            if (!inList) {
-              result += '<ul>';
-              inList = true;
-            }
-            const item = line.replace(/^[-*•]\s*/, '');
-            result += `<li>${item}</li>`;
-            continue;
-          }
-      
-          // REGULAR PARAGRAPH
-          if (inList) {
-            result += '</ul>';
-            inList = false;
-          }
-          result += `<p>${line}</p>`;
+      if (!text) return '<p>No description available. Check official notification.</p>';
+
+      const lines = text.split('\n');
+      let result = '';
+      let inList = false;
+
+      for (let line of lines) {
+        line = line.trim();
+        if (!line) {
+          if (inList) { result += '</ul>'; inList = false; }
+          continue;
         }
-      
-        if (inList) result += '</ul>';
-      
-        return result;
+
+        // TITLE: Ends with colon
+        if (line.endsWith(':')) {
+          if (inList) { result += '</ul>'; inList = false; }
+          const title = line.slice(0, -1).trim();
+          result += `<p class="job-title"><strong>${title}:</strong></p>`;
+          continue;
+        }
+
+        // BULLET: Starts with •, -, *
+        if (line.match(/^[-*•]\s/)) {
+          if (!inList) { result += '<ul class="job-list">'; inList = true; }
+          const item = line.replace(/^[-*•]\s+/, '');
+          result += `<li>${item}</li>`;
+          continue;
+        }
+
+        // NORMAL TEXT
+        if (inList) { result += '</ul>'; inList = false; }
+        result += `<p class="job-para">${line}</p>`;
       }
+
+      if (inList) result += '</ul>';
+      return result;
+    }
+
     async function loadJob() {
       if (!jobId) return showError("Invalid job link");
 
