@@ -242,6 +242,18 @@
       max-width: 900px;
       box-shadow: var(--box-shadow);
     }
+    .section-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 1.8rem 0 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid #e6ecff;
+    }
+    
+    .section-title strong {
+      color: var(--primary);
+    }
 
     @media (max-width: 768px) {
       .detail-box { padding: 2rem; }
@@ -284,34 +296,58 @@
     const jobId = urlParams.get('id');
 
     function formatDescription(text) {
-      if (!text) return '<p>No description available. Check official notification.</p>';
-
-      return text
-        // Bold headings: "Post Name:" → <strong>Post Name:</strong>
-        .replace(/^(.*?):/gm, '<strong>$1:</strong>')
-
-        // Highlight salary, age, etc.
-        .replace(/\b(Salary|Emoluments|Pay|Fee|Age Limit|Vacancies?|Posts?)\b/gi, '<span class="highlight">$1</span>')
-
-        // Bullets: • text → <li>
-        .replace(/^•\s*(.+)$/gm, '<li>$1</li>')
-
-        // Wrap lists
-        .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
-        .replace(/<\/li><li>/g, '</li><li>')
-
-        // Paragraphs
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/\n/g, '<br>')
-
-        // Wrap in p
-        .trim()
-        .replace(/^(.+)/, '<p>$1</p>')
-        .replace(/<p><ul>/g, '<ul>')
-        .replace(/<\/ul><\/p>/g, '</ul>')
-        .replace(/<p><\/p>/g, '');
-    }
-
+        if (!text) return '<p>No description available. Check official notification.</p>';
+      
+        const lines = text.split('\n');
+        let result = '';
+        let inList = false;
+      
+        for (let line of lines) {
+          line = line.trim();
+      
+          // SKIP EMPTY LINES
+          if (!line) {
+            if (inList) {
+              result += '</ul>';
+              inList = false;
+            }
+            continue;
+          }
+      
+          // DETECT PARAGRAPH TITLE: Ends with colon
+          const titleMatch = line.match(/^(.+?):$/);
+          if (titleMatch) {
+            if (inList) {
+              result += '</ul>';
+              inList = false;
+            }
+            result += `<p class="section-title"><strong>${titleMatch[1]}:</strong></p>`;
+            continue;
+          }
+      
+          // DETECT BULLET POINT
+          if (line.startsWith('•') || line.match(/^[-*•]\s/)) {
+            if (!inList) {
+              result += '<ul>';
+              inList = true;
+            }
+            const item = line.replace(/^[-*•]\s*/, '');
+            result += `<li>${item}</li>`;
+            continue;
+          }
+      
+          // REGULAR PARAGRAPH
+          if (inList) {
+            result += '</ul>';
+            inList = false;
+          }
+          result += `<p>${line}</p>`;
+        }
+      
+        if (inList) result += '</ul>';
+      
+        return result;
+      }
     async function loadJob() {
       if (!jobId) return showError("Invalid job link");
 
