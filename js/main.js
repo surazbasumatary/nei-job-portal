@@ -33,13 +33,13 @@ class NEIJobPortal {
     renderHomeDashboard() {
         const states = [
             { key: 'assam', name: 'Assam' },
-            { key: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
+            { key: 'nagaland', name: 'Nagaland' },
             { key: 'manipur', name: 'Manipur' },
             { key: 'meghalaya', name: 'Meghalaya' },
-            { key: 'mizoram', name: 'Mizoram' },
-            { key: 'nagaland', name: 'Nagaland' },
             { key: 'tripura', name: 'Tripura' },
-            { key: 'sikkim', name: 'Sikkim' }
+            { key: 'sikkim', name: 'Sikkim' },
+            { key: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
+            { key: 'mizoram', name: 'Mizoram' }   
         ];
     
         const today = new Date(); today.setHours(0,0,0,0);
