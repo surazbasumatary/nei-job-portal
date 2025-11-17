@@ -131,7 +131,7 @@ class NEIJobPortal {
             }
             const today = new Date(); today.setHours(0,0,0,0);
             
-            return jobs.slice(0, 4).map(job => {  // Sirf 4 jobs
+            return jobs.slice(0, 3).map(job => {  // Sirf 4 jobs
                 let dateText = job.parsedDate ? (() => {
                     const d = job.parsedDate;
                     const formatted = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
