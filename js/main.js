@@ -21,15 +21,15 @@ class NEIJobPortal {
 
     // SHOW HOME DASHBOARD
     showHome() {
-        this.homeDashboard.style.display = 'block';
-        this.stateSections.style.display = 'none';
+    this.homeDashboard.style.display = 'block';
+    this.stateSections.style.display = 'none';
 
-        // Active class sirf Home tab pe
-        document.querySelectorAll('.navbar a').forEach(a => a.classList.remove('active'));
-        document.getElementById('home-tab')?.classList.add('active');
+    // Active class sirf Home tab pe
+    document.querySelectorAll('.navbar a').forEach(a => a.classList.remove('active'));
+    document.getElementById('home-tab')?.classList.add('active');
 
-        this.renderHomeDashboard();
-    }
+    this.renderHomeDashboard();
+}
 
     // RENDER 8 STATES ON HOMEPAGE (SAME CARD DESIGN AS STATE PAGES)
     renderHomeDashboard() {
