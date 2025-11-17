@@ -12,9 +12,38 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7778955138168695" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
+    
+    <style>
+        /* Home Dashboard Styling - Bilkul Clean & Beautiful */
+        .home-dashboard { padding: 2rem 0; background: #f8fff8; min-height: 100vh; }
+        .dashboard-header { text-align: center; margin-bottom: 3rem; }
+        .dashboard-header h2 { font-size: 2.2rem; color: #11998e; margin: 0 0 0.5rem; font-weight: 800; }
+        .dashboard-header p { color: #636e72; font-size: 1.1rem; }
+
+        #home-states-container { display: grid; gap: 2.5rem; padding: 0 1rem; max-width: 1400px; margin: 0 auto; }
+        .home-state-section { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; }
+        .home-state-section:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(17,153,142,0.18); }
+
+        .home-state-section .section-header {
+            background: linear-gradient(120deg, #11998e, #38ef7d);
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+        }
+        .home-state-section .section-header h3 {
+            color: white; margin: 0; font-size: 1.5rem; font-weight: bold; text-align: center;
+        }
+        .home-state-section .job-list { padding: 1.5rem; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .dashboard-header h2 { font-size: 1.8rem; }
+            .home-state-section .section-header h3 { font-size: 1.3rem; }
+        }
+    </style>
 </head>
 <body>
-    <!-- TOP BANNER AD -->
+
+    <!-- TOP AD -->
     <div style="text-align:center; padding:10px 0; background:#f8f9fa;">
         <ins class="adsbygoogle"
              style="display:block"
@@ -28,7 +57,7 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <!-- CLICKABLE LOGO → GOES BACK TO HOME DASHBOARD -->
+            <!-- Logo → Home pe wapas jayega -->
             <div class="logo" onclick="window.app?.showHome()" style="cursor:pointer;">
                 <h1><span style="color:#11998e;">NEI</span> Job Portal</h1>
                 <p>North East India Jobs • Updated Every Hour</p>
@@ -46,30 +75,17 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="main">
-        <div class="container">
-
-            <!-- 8-STATE HOME DASHBOARD -->
-            <!-- HOME DASHBOARD (Replace purana wala) -->
-                        <!-- HOME DASHBOARD - 8 States with Original 3-Column Design -->
-            <div class="home-dashboard" id="home-dashboard">
-                <div class="container">
-                    <div class="dashboard-header">
-                        <h2>Latest Government Jobs in North East India</h2>
-                        <p>Updated every hour • Click any state card to view all jobs</p>
-                    </div>
-                    <div id="home-states-container">
-                        <!-- 8 states yahan inject honge - bilkul tera original 3-column wala design -->
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Purana sections container hide rahega jab home dikhega -->
-            <div class="sections-container" id="sections-container" style="display:none;"></div>
-
+    <!-- HOME DASHBOARD (8 States with Original 3-Column Cards) -->
+    <div class="home-dashboard" id="home-dashboard">
+        <div class="dashboard-header">
+            <h2>Latest Government Jobs in North East India</h2>
+            <p>Click on any state to view all categories • Updated every hour</p>
         </div>
-    </main>
+        <div id="home-states-container"></div>
+    </div>
+
+    <!-- Individual State Full Page (hidden initially) -->
+    <div class="sections-container" id="sections-container" style="display:none;"></div>
 
     <!-- BOTTOM AD -->
     <div style="text-align:center; margin:3rem 0; padding:1rem;">
@@ -89,71 +105,6 @@
             <p style="font-size:0.9rem; color:#777;">Admin Login: <a href="admin.html" style="color:#11998e;">Click Here</a></p>
         </div>
     </footer>
-
-    <!-- Dashboard Styling -->
-    <style>
-        .home-dashboard { padding: 2rem 0; text-align:center; background:#f8fff8; border-radius:12px; margin:1rem 0; }
-        .dashboard-header h2 { font-size:2rem; color:#11998e; margin-bottom:0.5rem; }
-        .dashboard-header p { color:#7f8c8d; margin-bottom:2rem; }
-        .state-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.8rem;
-            margin-top: 1rem;
-            padding: 0 1rem;
-        }
-        .state-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.8rem;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            cursor: pointer;
-            text-align: left;
-        }
-        .state-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            border-color: #11998e;
-        }
-        .state-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, #11998e, #38ef7d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .latest-job-title {
-            font-size: 1.15rem;
-            color: #2c3e50;
-            margin: 1rem 0;
-            line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .last-date {
-            font-size: 1rem;
-            padding: 0.6rem 1.2rem;
-            border-radius: 50px;
-            display: inline-block;
-            margin-top: 0.8rem;
-            font-weight: bold;
-        }
-        .last-date.soon { background:#e8f5e9; color:#27ae60; }
-        .last-date.urgent { background:#fff3e0; color:#e67e22; }
-        .last-date.critical { background:#ffebee; color:#e74c3c; }
-        .no-job {
-            color: #95a5a6;
-            font-style: italic;
-            margin: 1.5rem 0;
-            font-size: 1.1rem;
-        }
-    </style>
 
     <script src="js/public-data.js"></script>
     <script src="js/main.js"></script>
