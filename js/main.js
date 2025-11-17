@@ -202,23 +202,35 @@ class NEIJobPortal {
 
     // ALL EVENT LISTENERS
     setupEventListeners() {
-        // State tabs
-        document.querySelectorAll('.navbar a[data-state]').forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                this.goToState(link.dataset.state);
-            });
+    // State tabs
+    document.querySelectorAll('.navbar a[data-state]').forEach(link => {
+        link.addEventListener('click', e => {
+            e.preventDefault();
+            this.goToState(link.dataset.state);
         });
+    });
 
-        // Home tab
-        document.getElementById('home-tab')?.addEventListener('click', e => {
+    // Home tab click
+    const homeTab = document.getElementById('home-tab');
+    if (homeTab) {
+        homeTab.addEventListener('click', e => {
             e.preventDefault();
             this.showHome();
         });
-
-        // Logo click → Home
-        document.querySelector('.logo')?.addEventListener('click', () => this.showHome());
     }
+
+    // Logo click → Home dashboard
+    const logo = document.getElementById('logo-home');
+    if (logo) {
+        logo.addEventListener('click', () => {
+            this.showHome();
+        });
+    }
+
+    // Agar user direct URL se kisi state pe aaya ho (jaise bookmark se)
+    // toh bhi Home tab active na rahe
+    document.querySelectorAll('.navbar a').forEach(a => a.classList.remove('active'));
+    document.getElementById('home-tab')?.classList.add('active');
 }
 
 // START THE APP
