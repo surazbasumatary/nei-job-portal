@@ -5,18 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEI Job Portal - Find Your Dream Job in Northeast India</title>
     <meta name="description" content="Latest Government & Private Jobs in Assam, Arunachal, Nagaland, Manipur, Mizoram, Tripura, Meghalaya, Sikkim">
-    
+   
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7778955138168695" crossorigin="anonymous"></script>
-
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-
     <!-- TOP BANNER AD -->
     <div style="text-align:center; padding:10px 0; background:#f8f9fa;">
         <ins class="adsbygoogle"
@@ -31,7 +28,8 @@
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <div class="logo">
+            <!-- CLICKABLE LOGO → GOES BACK TO HOME DASHBOARD -->
+            <div class="logo" onclick="window.app?.showHome()" style="cursor:pointer;">
                 <h1><span style="color:#11998e;">NEI</span> Job Portal</h1>
                 <p>North East India Jobs • Updated Every Hour</p>
             </div>
@@ -48,23 +46,24 @@
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- MAIN CONTENT -->
     <main class="main">
         <div class="container">
-         
-            <!-- HOME DASHBOARD - 8 STATE LATEST JOBS -->
+
+            <!-- 8-STATE HOME DASHBOARD -->
             <div class="home-dashboard" id="home-dashboard">
                 <div class="dashboard-header">
                     <h2>Latest Government Jobs in North East India</h2>
-                    <p>Updated every hour • Choose your state below</p>
+                    <p>Updated every hour • Click any state to view all jobs</p>
                 </div>
                 <div class="state-grid" id="state-grid">
-                    <!-- 8 state cards will be injected here by JS -->
+                    <!-- Cards will be injected here -->
                 </div>
             </div>
-            
-            <!-- Keep the old sections container but hide it initially -->
+
+            <!-- FULL STATE VIEW (hidden initially) -->
             <div class="sections-container" id="sections-container" style="display:none;"></div>
+
         </div>
     </main>
 
@@ -82,12 +81,76 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 NEI Job Portal • Made with <span style="color:#e74c3c;">❤</span> in Assam</p>
+            <p>© 2025 NEI Job Portal • Made with <span style="color:#e74c3c;">❤</span> in Assam</p>
             <p style="font-size:0.9rem; color:#777;">Admin Login: <a href="admin.html" style="color:#11998e;">Click Here</a></p>
         </div>
     </footer>
 
-    <!-- JavaScript -->
+    <!-- Dashboard Styling -->
+    <style>
+        .home-dashboard { padding: 2rem 0; text-align:center; background:#f8fff8; border-radius:12px; margin:1rem 0; }
+        .dashboard-header h2 { font-size:2rem; color:#11998e; margin-bottom:0.5rem; }
+        .dashboard-header p { color:#7f8c8d; margin-bottom:2rem; }
+        .state-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+            padding: 0 1rem;
+        }
+        .state-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.8rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-align: left;
+        }
+        .state-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #11998e;
+        }
+        .state-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .latest-job-title {
+            font-size: 1.15rem;
+            color: #2c3e50;
+            margin: 1rem 0;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .last-date {
+            font-size: 1rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            display: inline-block;
+            margin-top: 0.8rem;
+            font-weight: bold;
+        }
+        .last-date.soon { background:#e8f5e9; color:#27ae60; }
+        .last-date.urgent { background:#fff3e0; color:#e67e22; }
+        .last-date.critical { background:#ffebee; color:#e74c3c; }
+        .no-job {
+            color: #95a5a6;
+            font-style: italic;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+        }
+    </style>
+
     <script src="js/public-data.js"></script>
     <script src="js/main.js"></script>
 </body>
