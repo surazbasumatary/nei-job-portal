@@ -33,61 +33,51 @@ class NEIJobPortal {
     renderHomeDashboard() {
         const states = [
             { key: 'assam', name: 'Assam' },
-            { key: 'nagaland', name: 'Nagaland' },
+            { key: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
             { key: 'manipur', name: 'Manipur' },
             { key: 'meghalaya', name: 'Meghalaya' },
+            { key: 'mizoram', name: 'Mizoram' },
+            { key: 'nagaland', name: 'Nagaland' },
             { key: 'tripura', name: 'Tripura' },
-            { key: 'sikkim', name: 'Sikkim' },
-            { key: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
-            { key: 'mizoram', name: 'Mizoram' }   
+            { key: 'sikkim', name: 'Sikkim' }
         ];
     
         const today = new Date(); today.setHours(0,0,0,0);
     
-        const cardsHTML = states.map(state => {
-            const allLatest = (this.stateWiseData[state.key]?.latestJobs || [])
+        const html = states.map(state => {
+            const latestJobs = (this.stateWiseData[state.key]?.latestJobs || [])
                 .filter(j => j.parsedDate && j.parsedDate >= today)
-                .sort((a, b) => b.parsedDate - a.parsedDate)
-                .slice(0, 5); // Top 5 latest active jobs
+                .slice(0, 12); // 12 jobs = 4 rows × 3 columns
     
-            const jobsHTML = allLatest.length > 0 ? allLatest.map(job => {
-                const daysLeft = Math.ceil((job.parsedDate - today) / 86400000);
-                const urgency = daysLeft > 7 ? 'soon' : daysLeft > 3 ? 'urgent' : 'critical';
-                const dateStr = `${String(job.parsedDate.getDate()).padStart(2,'0')}/${String(job.parsedDate.getMonth()+1).padStart(2,'0')}/${job.parsedDate.getFullYear()}`;
-    
-                return `
-                    <a href="pages/detail.html?id=${job.id}" class="job-item-mini">
-                        <span class="title">${job.title}</span>
-                        <span class="date ${urgency}">${dateStr} (${daysLeft}d left)</span>
-                    </a>
-                `;
-            }).join('') : '<div class="no-jobs">No active jobs right now</div>';
+            const jobCards = latestJobs.length > 0 
+                ? this.renderJobItems(latestJobs)  // ← YEH WAHI PURANA FUNCTION USE KIYA!
+                : '<p style="text-align:center; color:#95a5a6; grid-column:1/4;">No active jobs</p>';
     
             return `
-                <div class="state-card" data-state="${state.key}">
-                    <div class="state-header">:: ${state.name}</div>
-                    <div class="job-list-compact">
-                        ${jobsHTML}
+                <div class="state-block">
+                    <h3 class="state-title-home">
+                        ${state.name} Jobs
+                        <span class="view-all" data-state="${state.key}">View All →</span>
+                    </h3>
+                    <div class="job-list job-list-home">
+                        ${jobCards}
                     </div>
                 </div>
             `;
         }).join('');
     
-        this.stateGrid.innerHTML = cardsHTML;
+        document.getElementById('states-grid').innerHTML = html;
     
-        // Click on card → go to full state page
-        document.querySelectorAll('.state-card').forEach(card => {
-            card.onclick = (e) => {
-                // Allow clicking on job links without triggering card click
-                if (e.target.closest('a')) return;
-                const state = card.dataset.state;
-                this.homeDashboard.style.display = 'none';
-                this.sectionsContainer.style.display = 'block';
+        // View All → click
+        document.querySelectorAll('.view-all').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const state = btn.dataset.state;
+                document.getElementById('home-dashboard').style.display = 'none';
+                document.getElementById('sections-container').style.display = 'block';
                 this.renderStateSections(state);
-            };
+            });
         });
     }
-
     // Your existing methods (unchanged except small fixes)
     async loadAllJobs() {
         try {
