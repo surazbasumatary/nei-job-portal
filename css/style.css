@@ -259,4 +259,35 @@ body {
     }
 }
 /* **************This style is for Home Page recently added*/
+/* HOME PAGE STATES — EXACT SAME DESIGN AS STATE PAGES */
+#home-states-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 1.4rem;
+    padding: 0 1rem;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+.home-state-card {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+.home-state-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+.home-state-card .section-header {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
 
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    #home-states-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
