@@ -269,10 +269,13 @@ body {
 .dashboard-header h2 { font-size: 1.6rem; color: #11998e; text-align: center; margin: 0 0 0.3rem; font-weight: 800; }
 .dashboard-header p { text-align: center; color: #636e72; margin: 0 0 1rem; font-size: 0.9rem; }
 
+/* ←← YEH WAALA PART HI BADALNA HAI →→ */
 .state-grid {
     display: grid;
-    gap: 1rem;
-    padding: 0 0.6rem;
+    gap: 1.2rem;
+    padding: 0 1rem;
+    max-width: 1600px;          /* container ko limit kar diya */
+    margin: 0 auto;             /* center mein rakhega */
     
     /* Mobile: 1 column */
     grid-template-columns: 1fr;
@@ -285,12 +288,20 @@ body {
     }
 }
 
-/* Desktop & above: exactly 3 columns (yeh wahi jo tu chahta hai) */
+/* Desktop aur bade screens pe FORCEFULLY sirf 3 columns */
 @media (min-width: 1024px) {
     .state-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, 1fr);   /* ← yehi kaam karega ab */
     }
 }
+
+/* Extra bade monitors pe bhi 4 nahi aayega – guarantee */
+@media (min-width: 1600px) {
+    .state-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+/* ←← UPAR TAK →→ */
 
 .state-card {
     background: white;
@@ -303,32 +314,32 @@ body {
 }
 .state-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 20px rgba(17,153,142,0.15);
+    box-shadow: 0 12px 24px rgba(17,153,142,0.18);
     border-color: #11998e;
 }
 .state-header {
     background: linear-gradient(120deg, #11998e, #38ef7d);
     color: white;
-    padding: 0.65rem 0.8rem;
+    padding: 0.7rem 0.9rem;
     font-weight: bold;
-    font-size: 1.15rem;
+    font-size: 1.18rem;
     text-align: center;
 }
 .job-list-compact {
     padding: 0.5rem 0.7rem;
-    max-height: 195px;          /* 5 jobs ke liye perfect */
+    max-height: 208px;
     overflow-y: auto;
 }
 .job-item-mini {
     display: block;
-    padding: 0.5rem 0.7rem;
+    padding: 0.55rem 0.7rem;
     border-bottom: 1px dashed #eee;
-    transition: all 0.2s;
-    font-size: 0.89rem;
+    font-size: 0.92rem;
     color: #2c3e50;
     text-decoration: none;
     border-radius: 4px;
-    margin: 0.2rem 0;
+    margin: 0.25rem 0;
+    transition: all 0.2s;
 }
 .job-item-mini:hover {
     background: #f0fffa;
@@ -338,16 +349,15 @@ body {
 .job-item-mini .title {
     display: block;
     font-weight: 600;
-    margin-bottom: 0.25rem;
-    line-height: 1.3;
+    line-height: 1.35;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 .job-item-mini .date {
-    font-size: 0.72rem;
-    padding: 0.15rem 0.45rem;
-    border-radius: 3px;
+    font-size: 0.74rem;
+    padding: 0.18rem 0.5rem;
+    border-radius: 4px;
     font-weight: bold;
 }
 .date.soon { background:#e8f5e9; color:#27ae60; }
@@ -355,10 +365,10 @@ body {
 .date.critical { background:#ffebee; color:#e74c3c; }
 .no-jobs {
     text-align: center;
-    padding: 1rem 0.5rem;
+    padding: 1.2rem 0;
     color: #95a5a6;
     font-style: italic;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
 }
-.job-list-compact::-webkit-scrollbar { width: 4px; }
-.job-list-compact::-webkit-scrollbar-thumb { background: #11998e88; border-radius: 2px; }
+.job-list-compact::-webkit-scrollbar { width: 5px; }
+.job-list-compact::-webkit-scrollbar-thumb { background: #11998e99; border-radius: 3px; }
