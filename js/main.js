@@ -28,51 +28,42 @@ class NEIJobPortal {
 
     // Render Homepage - 8 States with 5 Latest Jobs Each (Purple Compact Cards)
     renderHomeDashboard() {
-        const states = [
-            { key: 'assam', name: 'Assam' },
-            { key: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
-            { key: 'nagaland', name: 'Nagaland' },
-            { key: 'manipur', name: 'Manipur' },
-            { key: 'meghalaya', name: 'Meghalaya' },
-            { key: 'mizoram', name: 'Mizoram' },
-            { key: 'tripura', name: 'Tripura' },
-            { key: 'sikkim', name: 'Sikkim' }
-        ];
-
-        const today = new Date(); today.setHours(0, 0, 0, 0);
-
-        const gridHTML = states.map(state => {
-            const latestJobs = (this.stateWiseData[state.key]?.latestJobs || [])
-                .filter(job => job.parsedDate && job.parsedDate >= today)
-                .sort((a, b) => b.created_at - a.created_at)
-                .slice(0, 5); // 5 latest active jobs
-
-            const jobsHTML = latestJobs.length > 0 
-                ? latestJobs.map(job => {
-                    const daysLeft = Math.ceil((job.parsedDate - today) / 86400000);
-                    const status = daysLeft > 7 ? 'Start' : daysLeft > 3 ? 'Closing' : 'Out';
-                    const badgeColor = status === 'Start' ? 'bg-green-100 text-green-800' : status === 'Closing' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
-                    const formattedDate = this.formatDate(job.lastdate);
-                    return `
-                        <a href="pages/detail.html?id=${job.id}" class="job-compact-purple">
-                            <div class="job-title-purple">${job.title}</div>
-                            <div class="job-date-purple ${badgeColor} px-2 py-1 rounded-full inline-block text-xs">${status} - ${formattedDate}</div>
-                        </a>
-                    `;
-                }).join('')
-                : '<div class="no-jobs-purple">No active jobs right now</div>';
-
-            return `
-                <div class="state-dashboard-card" onclick="window.app.goToState('${state.key}')" style="cursor:pointer;">
-                    <div class="state-header-purple">${state.name}</div>
-                    <div class="state-jobs-list">${jobsHTML}</div>
-                </div>
-            `;
-        }).join('');
-
-        this.homeStatesGrid.innerHTML = gridHTML;
-    }
-
+            const states = [
+                { key: 'assam', name: 'Assam' },
+                { key: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
+                { key: 'nagaland', name: 'Nagaland' },
+                { key: 'manipur', name: 'Manipur' },
+                { key: 'meghalaya', name: 'Meghalaya' },
+                { key: 'mizoram', name: 'Mizoram' },
+                { key: 'tripura', name: 'Tripura' },
+                { key: 'sikkim', name: 'Sikkim' }
+            ];
+        
+            const today = new Date(); today.setHours(0,0,0,0);
+        
+            const html = states.map(state => {
+                const jobs = (this.stateWiseData[state.key]?.latestJobs || [])
+                    .filter(j => j.parsedDate && j.parsedDate >= today)
+                    .slice(0, 12); // 12 jobs = perfect for double height cards
+        
+                const jobCards = jobs.length > 0 
+                    ? this.renderJobItems(jobs)  // ← YEH WAHI PURANA FUNCTION! SAME DESIGN!
+                    : '<p style="text-align:center;color:#95a5a6;padding:2rem;font-size:0.9rem;">No active jobs</p>';
+        
+                return `
+                    <div class="section home-state-card" onclick="window.app.goToState('${state.key}')">
+                        <div class="section-header" style="cursor:pointer;">
+                            <h3 class="section-title-mini">Latest ${state.name} Jobs</h3>
+                        </div>
+                        <div class="job-list">
+                            ${jobCards}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        
+            this.homeStatesGrid.innerHTML = html;
+        }
     goToState(state) {
         this.currentState = state;
         this.homeDashboard.style.display = 'none';
