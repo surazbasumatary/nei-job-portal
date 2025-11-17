@@ -41,42 +41,45 @@ class NEIJobPortal {
             { key: 'tripura', name: 'Tripura' },
             { key: 'sikkim', name: 'Sikkim' }
         ];
-
+    
         const today = new Date(); today.setHours(0,0,0,0);
-
+    
         const cardsHTML = states.map(state => {
-            const jobs = this.stateWiseData[state.key]?.latestJobs || [];
-            const activeJob = jobs.find(j => j.parsedDate && j.parsedDate >= today);
-
-            if (!activeJob) {
+            const allLatest = (this.stateWiseData[state.key]?.latestJobs || [])
+                .filter(j => j.parsedDate && j.parsedDate >= today)
+                .sort((a, b) => b.parsedDate - a.parsedDate)
+                .slice(0, 5); // Top 5 latest active jobs
+    
+            const jobsHTML = allLatest.length > 0 ? allLatest.map(job => {
+                const daysLeft = Math.ceil((job.parsedDate - today) / 86400000);
+                const urgency = daysLeft > 7 ? 'soon' : daysLeft > 3 ? 'urgent' : 'critical';
+                const dateStr = `${String(job.parsedDate.getDate()).padStart(2,'0')}/${String(job.parsedDate.getMonth()+1).padStart(2,'0')}/${job.parsedDate.getFullYear()}`;
+    
                 return `
-                    <div class="state-card" data-state="${state.key}">
-                        <div class="state-name">:: ${state.name}</div>
-                        <div class="no-job">No active jobs right now</div>
-                    </div>
+                    <a href="pages/detail.html?id=${job.id}" class="job-item-mini">
+                        <span class="title">${job.title}</span>
+                        <span class="date ${urgency}">${dateStr} (${daysLeft}d left)</span>
+                    </a>
                 `;
-            }
-
-            const daysLeft = Math.ceil((activeJob.parsedDate - today) / 86400000);
-            const urgency = daysLeft > 7 ? 'soon' : daysLeft > 3 ? 'urgent' : 'critical';
-            const dateStr = `${String(activeJob.parsedDate.getDate()).padStart(2,'0')}/${String(activeJob.parsedDate.getMonth()+1).padStart(2,'0')}/${activeJob.parsedDate.getFullYear()}`;
-
+            }).join('') : '<div class="no-jobs">No active jobs right now</div>';
+    
             return `
                 <div class="state-card" data-state="${state.key}">
-                    <div class="state-name">:: ${state.name}</div>
-                    <div class="latest-job-title">${activeJob.title}</div>
-                    <div class="last-date ${urgency}">
-                        Last Date: ${dateStr} (${daysLeft} day${daysLeft>1?'s':''} left)
+                    <div class="state-header">:: ${state.name}</div>
+                    <div class="job-list-compact">
+                        ${jobsHTML}
                     </div>
                 </div>
             `;
         }).join('');
-
+    
         this.stateGrid.innerHTML = cardsHTML;
-
-        // Card click → go to that state
+    
+        // Click on card → go to full state page
         document.querySelectorAll('.state-card').forEach(card => {
-            card.onclick = () => {
+            card.onclick = (e) => {
+                // Allow clicking on job links without triggering card click
+                if (e.target.closest('a')) return;
                 const state = card.dataset.state;
                 this.homeDashboard.style.display = 'none';
                 this.sectionsContainer.style.display = 'block';
