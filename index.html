@@ -3,18 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEI Job Portal - Northeast India Jobs</title>
+    <title>NEI Job Portal - Northeast India Government Jobs</title>
+    <meta name="description" content="Latest Jobs in Assam, Arunachal, Nagaland, Manipur, Mizoram, Tripura, Meghalaya, Sikkim">
+    
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Ads -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7778955138168695" crossorigin="anonymous"></script>
+    
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
+    
+    <style>
+        /* Home Dashboard Grid - Same as state pages */
+        #home-states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 1.4rem;
+            padding: 1rem;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+        @media (max-width: 768px) {
+            #home-states-grid { grid-template-columns: 1fr; gap: 1rem; padding: 0.5rem; }
+        }
+    </style>
 </head>
 <body>
 
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <!-- Logo with ID -->
+            <!-- Logo with ID (important) -->
             <div class="logo" id="logo-home" style="cursor:pointer;">
                 <h1><span style="color:#667eea;">NEI</span> Job Portal</h1>
                 <p>North East India Jobs • Updated Every Hour</p>
@@ -22,34 +42,41 @@
             <nav class="navbar">
                 <a href="#" id="home-tab" class="active">Home</a>
                 <a data-state="assam">Assam</a>
+                <a data-state="arunachal-pradesh">Arunachal Pradesh</a>
                 <a data-state="nagaland">Nagaland</a>
                 <a data-state="manipur">Manipur</a>
                 <a data-state="meghalaya">Meghalaya</a>
+                <a data-state="mizoram">Mizoram</a>
                 <a data-state="tripura">Tripura</a>
                 <a data-state="sikkim">Sikkim</a>
-                <a data-state="arunachal-pradesh">Arunachal Pradesh</a>
-                <a data-state="mizoram">Mizoram</a>
             </nav>
         </div>
     </header>
 
-    <!-- HOME DASHBOARD -->
-    <div class="home-dashboard" id="home-dashboard">
+    <!-- HOME DASHBOARD (8 States) -->
+    <div id="home-dashboard">
         <div class="container">
-            <div class="dashboard-header">
-                <h2>Latest Jobs Across North East India</h2>
-                <p>Click any state to view all categories</p>
+            <div style="text-align:center; padding:2rem 0;">
+                <h2 style="color:#667eea; font-size:2rem;">Latest Government Jobs in North East India</h2>
+                <p style="color:#555;">Click any state to view all categories</p>
             </div>
             <div id="home-states-grid"></div>
         </div>
     </div>
 
-    <!-- STATE SECTIONS (hidden initially) -->
-    <div id="state-sections" style="display:none;">
+    <!-- STATE PAGE (hidden initially) -->
+    <div id="state-sections" style="display:none; padding-top:1rem;">
         <div class="container">
             <div class="sections-container" id="sections-container"></div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 NEI Job Portal • Made with <span style="color:#e74c3c;">❤</span> in Assam</p>
+        </div>
+    </footer>
 
     <script src="js/public-data.js"></script>
     <script src="js/main.js"></script>
