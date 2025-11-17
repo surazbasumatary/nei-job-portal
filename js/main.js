@@ -27,10 +27,10 @@ class NEIJobPortal {
 
     renderHomeDashboard() {
         const states = [
-            {key:'assam', name:'Assam'}, {key:'arunachal-pradesh', name:'Arunachal Pradesh'},
-            {key:'nagaland', name:'Nagaland'}, {key:'manipur', name:'Manipur'},
-            {key:'meghalaya', name:'Meghalaya'}, {key:'mizoram', name:'Mizoram'},
-            {key:'tripura', name:'Tripura'}, {key:'sikkim', name:'Sikkim'}
+            {key:'assam', name:'Assam'}, {key:'nagaland', name:'Nagaland'},
+            {key:'manipur', name:'Manipur'}, {key:'meghalaya', name:'Meghalaya'},
+            {key:'tripura', name:'Tripura'}, {key:'sikkim', name:'Sikkim'},
+            {key:'arunachal-pradesh', name:'Arunachal Pradesh'},{key:'mizoram', name:'Mizoram'}
         ];
 
         const today = new Date(); today.setHours(0,0,0,0);
@@ -170,7 +170,6 @@ class NEIJobPortal {
 
             return `<a href="pages/detail.html?id=${job.id}" class="job-item compact-card">
                 <div class="job-title-inline">${job.title}<span class="date-inline">${dateText}</span></div>
-                <div class="apply-btn">Apply →</div>
             </a>`;
         }).join('');
     }
