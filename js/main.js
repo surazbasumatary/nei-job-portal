@@ -1,9 +1,9 @@
-// js/main.js - FINAL FIXED v3.0 → 8-State Dashboard + Logo Home Button
+// js/main.js - FINAL v4.0 → Home Dashboard + Original 3-Column Design
 class NEIJobPortal {
     constructor() {
-        this.homeDashboard = document.getElementById('home-dashboard');
         this.sectionsContainer = document.getElementById('sections-container');
-        this.stateGrid = document.getElementById('state-grid');
+        this.homeDashboard = document.getElementById('home-dashboard');
+        this.homeStatesContainer = document.getElementById('home-states-container');
         this.currentState = 'assam';
         this.allJobs = [];
         this.centralGovtJobs = [];
@@ -14,95 +14,83 @@ class NEIJobPortal {
     async init() {
         await this.loadAllJobs();
         this.setupEventListeners();
-
-        // FIRST: Build data → THEN render dashboard → THEN show Assam
-        this.buildStateData();
-        this.showHome();  // This will show the 8-state dashboard with real data
-
-        console.log('%cNEI JOB PORTAL v3.0 DASHBOARD FIXED & LIVE!', 'color: #11998e; font-size: 22px; font-weight: bold');
+        this.showHome(); // Pehle home dashboard
+        this.renderStateSections('assam'); // Background mein Assam load
+        console.log('%cNEI JOB PORTAL v4.0 — HOME DASHBOARD LIVE WITH ORIGINAL 3-COLUMN!', 'color: #11998e; font-size: 22px; font-weight: bold');
     }
 
-    // NEW: Public method to go back home
+    // Show Home Dashboard
     showHome() {
         this.homeDashboard.style.display = 'block';
         this.sectionsContainer.style.display = 'none';
         document.querySelectorAll('.navbar a').forEach(a => a.classList.remove('active'));
-        this.renderHomeDashboard();  // Re-render fresh data
+        this.renderHomeDashboard();
     }
 
+    // Render 8 States on Home with Original 3-Column Job Cards
     renderHomeDashboard() {
         const states = [
             { key: 'assam', name: 'Assam' },
             { key: 'arunachal-pradesh', name: 'Arunachal Pradesh' },
+            { key: 'nagaland', name: 'Nagaland' },
             { key: 'manipur', name: 'Manipur' },
             { key: 'meghalaya', name: 'Meghalaya' },
-            { key: 'mizoram', name: 'Mizoram' },
-            { key: 'nagaland', name: 'Nagaland' },
             { key: 'tripura', name: 'Tripura' },
+            { key: 'mizoram', name: 'Mizoram' },
             { key: 'sikkim', name: 'Sikkim' }
         ];
-    
+
         const today = new Date(); today.setHours(0,0,0,0);
-    
+
         const html = states.map(state => {
-            const latestJobs = (this.stateWiseData[state.key]?.latestJobs || [])
+            const activeJobs = (this.stateWiseData[state.key]?.latestJobs || [])
                 .filter(j => j.parsedDate && j.parsedDate >= today)
-                .slice(0, 12); // 12 jobs = 4 rows × 3 columns
-    
-            const jobCards = latestJobs.length > 0 
-                ? this.renderJobItems(latestJobs)  // ← YEH WAHI PURANA FUNCTION USE KIYA!
-                : '<p style="text-align:center; color:#95a5a6; grid-column:1/4;">No active jobs</p>';
-    
+                .slice(0, 15);
+
             return `
-                <div class="state-block">
-                    <h3 class="state-title-home">
-                        ${state.name} Jobs
-                        <span class="view-all" data-state="${state.key}">View All →</span>
-                    </h3>
-                    <div class="job-list job-list-home">
-                        ${jobCards}
+                <div class="home-state-section" onclick="window.app.goToState('${state.key}')">
+                    <div class="section-header">
+                        <h3 class="section-title-mini">${state.name} Latest Jobs</h3>
+                    </div>
+                    <div class="job-list">
+                        ${this.renderJobItems(activeJobs)}
                     </div>
                 </div>
             `;
         }).join('');
-    
-        document.getElementById('states-grid').innerHTML = html;
-    
-        // View All → click
-        document.querySelectorAll('.view-all').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const state = btn.dataset.state;
-                document.getElementById('home-dashboard').style.display = 'none';
-                document.getElementById('sections-container').style.display = 'block';
-                this.renderStateSections(state);
-            });
-        });
+
+        this.homeStatesContainer.innerHTML = html;
     }
-    // Your existing methods (unchanged except small fixes)
+
+    goToState(state) {
+        this.homeDashboard.style.display = 'none';
+        this.sectionsContainer.style.display = 'block';
+        this.renderStateSections(state);
+    }
+
+    // Baaki sab tera original code (unchanged)
     async loadAllJobs() {
         try {
             const { data, error } = await supabase.from('jobs').select('*').order('created_at', { ascending: false });
             if (error) throw error;
             if (!data || data.length === 0) {
-                this.stateGrid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#95a5a6; padding:3rem;">No jobs found.</p>';
+                this.homeStatesContainer.innerHTML = '<p style="text-align:center; color:#95a5a6; padding:3rem;">No jobs found.</p>';
                 return;
             }
-
             const today = new Date(); today.setHours(0,0,0,0);
             this.allJobs = data.map(job => ({ ...job, parsedDate: this.parseDate(job.lastdate) }));
-
             this.centralGovtJobs = this.allJobs.filter(job => {
                 const s = (job.state || '').toLowerCase();
                 return s.includes('central') || s.includes('upsc') || s.includes('ssc') || s.includes('all india');
             });
-
+            this.buildStateData();
         } catch (err) {
             console.error('Supabase Error:', err);
-            this.stateGrid.innerHTML = '<p style="color:red; text-align:center;">Failed to load jobs.</p>';
+            this.homeStatesContainer.innerHTML = '<p style="color:red;">Failed to load jobs.</p>';
         }
     }
 
-    parseDate(raw) { /* your existing parseDate function - keep as is */ 
+    parseDate(raw) {
         if (!raw) return null;
         const str = String(raw).trim();
         if (!str) return null;
@@ -126,7 +114,7 @@ class NEIJobPortal {
         states.forEach(state => {
             const stateJobs = this.allJobs.filter(job => {
                 const jobState = (job.state || '').toLowerCase().trim().replace(/\s+/g, '-');
-                return jobState.includes(state) || jobState === 'arunachal-pradesh' && state === 'arunachal-pradesh';
+                return jobState.includes(state) || (jobState === 'arunachal pradesh' && state === 'arunachal-pradesh');
             });
             this.stateWiseData[state] = {
                 latestJobs: stateJobs.filter(j => !j.category || j.category === 'latestJobs'),
@@ -136,19 +124,12 @@ class NEIJobPortal {
                 privateJobs: stateJobs.filter(j => j.category === 'privateJobs')
             };
         });
-        this.centralGovtJobs = this.centralGovtJobs; // already set
     }
-
-    // renderStateSections, renderJobItems, formatDate, setupEventListeners → keep exactly as your old code
-    // (just copy-paste your existing ones here - they work perfectly)
 
     renderStateSections(state) {
         this.currentState = state;
         document.querySelectorAll('.navbar a').forEach(a => a.classList.remove('active'));
         document.querySelector(`.navbar a[data-state="${state}"]`)?.classList.add('active');
-        this.homeDashboard.style.display = 'none';
-        this.sectionsContainer.style.display = 'block';
-
         const data = this.stateWiseData[state] || {};
         const sectionsConfig = [
             { id: `${state}-latest-jobs`, title: "Latest Jobs", data: data.latestJobs || [], icon: "New" },
@@ -158,7 +139,6 @@ class NEIJobPortal {
             { id: `${state}-central-govt`, title: "Central Govt Jobs", data: this.centralGovtJobs, icon: "India Flag" },
             { id: `${state}-private-jobs`, title: "Private Jobs", data: data.privateJobs || [], icon: "Briefcase" }
         ];
-
         this.sectionsContainer.innerHTML = sectionsConfig.map(section => `
             <div class="section" id="${section.id}">
                 <div class="section-header">
@@ -170,7 +150,9 @@ class NEIJobPortal {
     }
 
     renderJobItems(jobs, type = '') {
-        if (!jobs || jobs.length === 0) return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No active jobs available</p>';
+        if (!jobs || jobs.length === 0) {
+            return '<p style="text-align:center; color:#95a5a6; padding:2rem;">No active jobs available</p>';
+        }
         const today = new Date(); today.setHours(0,0,0,0);
         return jobs.map(job => {
             if (type === 'result' || type === 'admit' || type === 'answerkey') {
@@ -182,7 +164,6 @@ class NEIJobPortal {
                     </div>
                 </a>`;
             }
-
             let dateText = job.parsedDate ? (
                 (() => {
                     const d = job.parsedDate;
@@ -211,15 +192,12 @@ class NEIJobPortal {
         document.querySelectorAll('.navbar a[data-state]').forEach(link => {
             link.addEventListener('click', e => {
                 e.preventDefault();
-                this.homeDashboard.style.display = 'none';
-                this.sectionsContainer.style.display = 'block';
-                this.renderStateSections(link.dataset.state);
+                this.goToState(link.dataset.state);
             });
         });
     }
 }
 
-// START
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof supabase === 'undefined') return console.error('Supabase not loaded!');
     new NEIJobPortal().init();
