@@ -124,6 +124,30 @@ class NEIJobPortal {
             </div>
         `).join('');
     }
+            // SIRF HOME DASHBOARD KE LIYE — 4 Jobs + No Apply Button
+        renderJobItemsForHome(jobs) {
+            if (!jobs || jobs.length === 0) {
+                return '<p style="text-align:center;color:#95a5a6;padding:2rem;font-size:0.9rem;">No active jobs</p>';
+            }
+            const today = new Date(); today.setHours(0,0,0,0);
+            
+            return jobs.slice(0, 4).map(job => {  // Sirf 4 jobs
+                let dateText = job.parsedDate ? (() => {
+                    const d = job.parsedDate;
+                    const formatted = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+                    const daysLeft = Math.ceil((d - today) / 86400000);
+                    const color = daysLeft > 7 ? '#27ae60' : daysLeft > 3 ? '#f39c12' : '#e74c3c';
+                    return `Last Date: <strong style="color:${color}">${formatted}</strong> <small>(${daysLeft} day${daysLeft>1?'s':''} left)</small>`;
+                })() : '<span style="color:#95a5a6;">Date Not Announced</span>';
+        
+                return `<a href="pages/detail.html?id=${job.id}" class="job-item compact-card" style="justify-content: flex-start;">
+                    <div class="job-title-inline">${job.title}
+                        <span class="date-inline">${dateText}</span>
+                    </div>
+                    <!-- Apply button nahi hai yahan -->
+                </a>`;
+            }).join('');
+        }
 
     renderJobItems(jobs, type = '') {
         if (!jobs || jobs.length === 0) return '<p style="text-align:center;color:#95a5a6;padding:2rem;">No jobs available</p>';
