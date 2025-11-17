@@ -258,3 +258,59 @@ body {
         justify-content: center;
     }
 }
+.home-dashboard { padding: 2rem 0; text-align:center; background:#f8fff8; }
+.dashboard-header h2 { font-size:2rem; color:#11998e; margin-bottom:0.5rem; }
+.dashboard-header p { color:#7f8c8d; }
+.state-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 0 1rem;
+}
+.state-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+.state-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    border-color: #11998e;
+}
+.state-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+.latest-job-title {
+    font-size: 1.1rem;
+    color: #34495e;
+    margin: 0.8rem 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.last-date {
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    display: inline-block;
+    margin-top: 0.8rem;
+    font-weight: bold;
+}
+.last-date.soon { background:#e8f5e9; color:#27ae60; }
+.last-date.urgent { background:#fff3e0; color:#e67e22; }
+.last-date.critical { background:#ffebee; color:#e74c3c; }
+.no-job {
+    color: #95a5a6;
+    font-style: italic;
+    margin: 1rem 0;
+}
