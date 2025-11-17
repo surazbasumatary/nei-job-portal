@@ -260,6 +260,7 @@ body {
 }
 /* This style is for Home Page recently added*/
 
+
 .home-dashboard {
     padding: 1rem 0;
     background: linear-gradient(135deg, #f8fbfc 0%, #eef2f3 100%);
@@ -269,106 +270,44 @@ body {
 .dashboard-header h2 { font-size: 1.6rem; color: #11998e; text-align: center; margin: 0 0 0.3rem; font-weight: 800; }
 .dashboard-header p { text-align: center; color: #636e72; margin: 0 0 1rem; font-size: 0.9rem; }
 
-/* ←← YEH WAALA PART HI BADALNA HAI →→ */
+/* ←← YEH WAALA PART HI REPLACE KARNA HAI →→ */
 .state-grid {
     display: grid;
-    gap: 1.2rem;
+    gap: 1.3rem;
     padding: 0 1rem;
-    max-width: 1600px;          /* container ko limit kar diya */
-    margin: 0 auto;             /* center mein rakhega */
-    
-    /* Mobile: 1 column */
-    grid-template-columns: 1fr;
+    max-width: 1400px;           /* Container ko tightly limit kar diya */
+    margin: 0 auto;              /* Perfect center */
+    grid-template-columns: 1fr;  /* Mobile default */
 }
 
-/* Tablet: 2 columns */
-@media (min-width: 640px) {
-    .state-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* Tablet – 2 columns */
+@media (min-width: 640px) and (max-width: 1023px) {
+    .state-grid { grid-template-columns: 1fr 1fr; }
 }
 
-/* Desktop aur bade screens pe FORCEFULLY sirf 3 columns */
+/* Desktop se lekar infinity tak – FORCE 3 columns only */
 @media (min-width: 1024px) {
     .state-grid {
-        grid-template-columns: repeat(3, 1fr);   /* ← yehi kaam karega ab */
+        grid-template-columns: repeat(3, 1fr) !important;  /* Force 3 */
+        grid-auto-rows: auto;
     }
 }
 
-/* Extra bade monitors pe bhi 4 nahi aayega – guarantee */
+/* Extra safety – agar koi 4K+ monitor ho tab bhi 3 se zyada nahi */
 @media (min-width: 1600px) {
-    .state-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-    }
+    .state-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }
-/* ←← UPAR TAK →→ */
+@media (min-width: 2000px) {
+    .state-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
 
-.state-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: all 0.25s ease;
-    cursor: pointer;
-    border: 1px solid #eaeaea;
+/* Sabse bada wala hack – zoom change hone pe bhi 3 hi rahe */
+.state-grid {
+    container-type: inline-size;
 }
-.state-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(17,153,142,0.18);
-    border-color: #11998e;
+
+/* Container query – agar container width 1100px se kam ho to max 3 */
+@container (max-width: 1100px) {
+    .state-grid { grid-template-columns: repeat(3, 1fr) !important; }
 }
-.state-header {
-    background: linear-gradient(120deg, #11998e, #38ef7d);
-    color: white;
-    padding: 0.7rem 0.9rem;
-    font-weight: bold;
-    font-size: 1.18rem;
-    text-align: center;
-}
-.job-list-compact {
-    padding: 0.5rem 0.7rem;
-    max-height: 208px;
-    overflow-y: auto;
-}
-.job-item-mini {
-    display: block;
-    padding: 0.55rem 0.7rem;
-    border-bottom: 1px dashed #eee;
-    font-size: 0.92rem;
-    color: #2c3e50;
-    text-decoration: none;
-    border-radius: 4px;
-    margin: 0.25rem 0;
-    transition: all 0.2s;
-}
-.job-item-mini:hover {
-    background: #f0fffa;
-    padding-left: 1rem;
-    color: #11998e;
-}
-.job-item-mini .title {
-    display: block;
-    font-weight: 600;
-    line-height: 1.35;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.job-item-mini .date {
-    font-size: 0.74rem;
-    padding: 0.18rem 0.5rem;
-    border-radius: 4px;
-    font-weight: bold;
-}
-.date.soon { background:#e8f5e9; color:#27ae60; }
-.date.urgent { background:#fff3e0; color:#e67e22; }
-.date.critical { background:#ffebee; color:#e74c3c; }
-.no-jobs {
-    text-align: center;
-    padding: 1.2rem 0;
-    color: #95a5a6;
-    font-style: italic;
-    font-size: 0.9rem;
-}
-.job-list-compact::-webkit-scrollbar { width: 5px; }
-.job-list-compact::-webkit-scrollbar-thumb { background: #11998e99; border-radius: 3px; }
+
