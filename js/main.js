@@ -40,9 +40,8 @@ class NEIJobPortal {
                 .filter(j => j.parsedDate && j.parsedDate >= today)
                 .slice(0, 15);
 
-            const cards = jobs.length ? this.renderJobItems(jobs) 
-                : '<p style="text-align:center;color:#95a5a6;padding:2rem;">No active jobs</p>';
-
+            const cards = jobs.length ? this.renderJobItemsForHome(jobs)
+            : '<p style="text-align:center;color:#95a5a6;padding:2rem;font-size:0.9rem;">No active jobs</p>';
             return `
                 <div class="section" onclick="window.app.goToState('${state.key}')">
                     <div class="section-header" style="cursor:pointer;background:linear-gradient(135deg,#667eea,#764ba2);">
