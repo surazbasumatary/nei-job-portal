@@ -13,37 +13,30 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
     
+    <!-- Homepage Dashboard CSS (Purple Theme Match) -->
     <style>
-        /* Home Dashboard Styling - Bilkul Clean & Beautiful */
-        .home-dashboard { padding: 2rem 0; background: #f8fff8; min-height: 100vh; }
+        .home-dashboard { padding: 2rem 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; min-height: 100vh; }
         .dashboard-header { text-align: center; margin-bottom: 3rem; }
-        .dashboard-header h2 { font-size: 2.2rem; color: #11998e; margin: 0 0 0.5rem; font-weight: 800; }
-        .dashboard-header p { color: #636e72; font-size: 1.1rem; }
-
-        #home-states-container { display: grid; gap: 2.5rem; padding: 0 1rem; max-width: 1400px; margin: 0 auto; }
-        .home-state-section { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; }
-        .home-state-section:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(17,153,142,0.18); }
-
-        .home-state-section .section-header {
-            background: linear-gradient(120deg, #11998e, #38ef7d);
-            padding: 1.2rem 1.5rem;
-            cursor: pointer;
-        }
-        .home-state-section .section-header h3 {
-            color: white; margin: 0; font-size: 1.5rem; font-weight: bold; text-align: center;
-        }
-        .home-state-section .job-list { padding: 1.5rem; }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .dashboard-header h2 { font-size: 1.8rem; }
-            .home-state-section .section-header h3 { font-size: 1.3rem; }
-        }
+        .dashboard-header h2 { font-size: 2.5rem; color: white; margin: 0 0 0.5rem; font-weight: bold; }
+        .dashboard-header p { font-size: 1.1rem; opacity: 0.9; }
+        
+        #home-states-grid { display: grid; gap: 2rem; padding: 0 1rem; max-width: 1400px; margin: 0 auto; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
+        .state-dashboard-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s; cursor: pointer; }
+        .state-dashboard-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .state-header-purple { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 1.5rem; text-align: center; font-size: 1.4rem; font-weight: bold; }
+        .state-jobs-list { padding: 1rem; max-height: 400px; overflow-y: auto; }
+        .job-compact-purple { display: block; padding: 1rem; margin-bottom: 1rem; background: #f8f9ff; border-radius: 12px; text-decoration: none; color: #333; border-left: 4px solid #667eea; transition: all 0.2s; }
+        .job-compact-purple:hover { background: #e8f4f8; transform: translateX(5px); border-left-color: #764ba2; }
+        .job-title-purple { font-weight: bold; margin-bottom: 0.5rem; font-size: 1rem; }
+        .job-date-purple { font-size: 0.85rem; color: #667eea; font-weight: 600; }
+        .no-jobs-purple { text-align: center; padding: 2rem; color: #999; font-style: italic; }
+        
+        /* Mobile Responsive for Dashboard */
+        @media (max-width: 768px) { #home-states-grid { grid-template-columns: 1fr; } .state-header-purple { font-size: 1.2rem; padding: 1rem; } }
     </style>
 </head>
 <body>
-
-    <!-- TOP AD -->
+    <!-- TOP BANNER AD -->
     <div style="text-align:center; padding:10px 0; background:#f8f9fa;">
         <ins class="adsbygoogle"
              style="display:block"
@@ -53,13 +46,12 @@
              data-full-width-responsive="true"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
-
+    
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <!-- Logo → Home pe wapas jayega -->
             <div class="logo" onclick="window.app?.showHome()" style="cursor:pointer;">
-                <h1><span style="color:#11998e;">NEI</span> Job Portal</h1>
+                <h1><span style="color:#667eea;">NEI</span> Job Portal</h1>
                 <p>North East India Jobs • Updated Every Hour</p>
             </div>
             <nav class="navbar">
@@ -74,19 +66,25 @@
             </nav>
         </div>
     </header>
-
-    <!-- HOME DASHBOARD (8 States with Original 3-Column Cards) -->
-    <div class="home-dashboard" id="home-dashboard">
+    
+    <!-- HOME DASHBOARD - 8 States with Latest Jobs -->
+    <main class="home-dashboard" id="home-dashboard">
         <div class="dashboard-header">
-            <h2>Latest Government Jobs in North East India</h2>
-            <p>Click on any state to view all categories • Updated every hour</p>
+            <h2>Latest Jobs Across North East India</h2>
+            <p>One-stop dashboard for all states • Click any card to explore</p>
         </div>
-        <div id="home-states-container"></div>
-    </div>
-
-    <!-- Individual State Full Page (hidden initially) -->
-    <div class="sections-container" id="sections-container" style="display:none;"></div>
-
+        <div id="home-states-grid">
+            <!-- 8 State Cards will be injected here by JS -->
+        </div>
+    </main>
+    
+    <!-- State-Specific Sections (Hidden Initially) -->
+    <main class="main" id="state-sections" style="display:none;">
+        <div class="container">
+            <div class="sections-container" id="sections-container"></div>
+        </div>
+    </main>
+    
     <!-- BOTTOM AD -->
     <div style="text-align:center; margin:3rem 0; padding:1rem;">
         <ins class="adsbygoogle"
@@ -97,15 +95,15 @@
              data-full-width-responsive="true"></ins>
         <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
     </div>
-
+    
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>© 2025 NEI Job Portal • Made with <span style="color:#e74c3c;">❤</span> in Assam</p>
-            <p style="font-size:0.9rem; color:#777;">Admin Login: <a href="admin.html" style="color:#11998e;">Click Here</a></p>
+            <p>&copy; 2025 NEI Job Portal • Made with <span style="color:#e74c3c;">❤</span> in Assam</p>
+            <p style="font-size:0.9rem; color:#777;">Admin Login: <a href="admin.html" style="color:#667eea;">Click Here</a></p>
         </div>
     </footer>
-
+    
     <script src="js/public-data.js"></script>
     <script src="js/main.js"></script>
 </body>
